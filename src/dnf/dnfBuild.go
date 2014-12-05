@@ -17,6 +17,7 @@ func Init() {
 		conjs_ = &conjList{conjs: make([]Conj, 0, 16)}
 		amts_ = &amtList{amts: make([]Amt, 0, 16)}
 		terms_ = &termList{terms: make([]Term, 0, 16)}
+		termMap = make(map[string]int)
 
 		/* empty set ∅ */
 		terms_.terms = append(terms_.terms, Term{id: 0, key: "", val: ""})
@@ -277,6 +278,8 @@ type termList struct {
 	terms []Term
 }
 
+var termMap map[string]int
+
 var docs_ *docList
 var conjs_ *conjList
 var amts_ *amtList
@@ -330,16 +333,21 @@ func (this *amtList) Add(amt *Amt) (amtId int) {
 }
 
 func (this *termList) Add(term *Term) (termId int) {
+	if id, ok := termMap[term.key+"%"+term.val]; ok {
+		term.id = id
+		return id
+	}
 	this.mutex.Lock()
 	defer this.mutex.Unlock()
-	for i, t := range this.terms {
-		if t.Equal(term) {
-			term.id = t.id
-			return i
-		}
-	}
+	// for i, t := range this.terms {
+	// 	if t.Equal(term) {
+	// 		term.id = t.id
+	// 		return i
+	// 	}
+	// }
 	term.id = len(this.terms)
 	this.terms = append(this.terms, *term)
+	termMap[term.key+"%"+term.val] = term.id
 	return term.id
 }
 

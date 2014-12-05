@@ -39,7 +39,6 @@ func addDocs() {
 
 func main() {
 	dnf.Init()
-
 	addDocs()
 
 	dnf.DisplayDocs()
@@ -58,4 +57,20 @@ func main() {
 
 	fmt.Println()
 	dnf.DisplayConjRevs2()
+
+	fmt.Println()
+	conds := []dnf.Cond{{"age", "3"}, {"state", "CA"}, {"gender", "M"}}
+	//conds := []dnf.Cond{{"state", "CA"}, {"age", "4"}}
+	//conds := []dnf.Cond{{"gender", "M"}}
+	resultDocs, err := dnf.Search(conds)
+	if err != nil {
+		fmt.Println("search error: ", err)
+		return
+	}
+	s := ""
+	for _, docid := range resultDocs {
+		s += strconv.Itoa(docid) + " -> "
+	}
+	fmt.Println("conds: ", conds)
+	fmt.Println("found doc: ", s)
 }
