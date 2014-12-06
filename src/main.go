@@ -5,6 +5,7 @@ import (
 
 	"fmt"
 	"strconv"
+	"sync"
 )
 
 var docs []string = []string{
@@ -37,9 +38,25 @@ func addDocs() {
 	}
 }
 
+func addDocsRace() {
+	task := func(i int, doc string, wg *sync.WaitGroup) {
+		if err := dnf.AddDoc("doc"+strconv.Itoa(i), strconv.Itoa(i), doc); err != nil {
+			fmt.Println("add doc[", strconv.Itoa(i), "] error:", err)
+			panic(err)
+		}
+		wg.Done()
+	}
+	var wg sync.WaitGroup
+	for i, doc := range docs {
+		wg.Add(1)
+		go task(i, doc, &wg)
+	}
+	wg.Wait()
+}
+
 func main() {
 	dnf.Init()
-	addDocs()
+	addDocsRace()
 
 	dnf.DisplayDocs()
 

@@ -49,8 +49,8 @@ func (this *Amt) ToString() string {
 		return ""
 	}
 
-	terms_.mutex.RLock()
-	defer terms_.mutex.RUnlock()
+	terms_.RLock()
+	defer terms_.RUnlock()
 
 	var key, op string
 
@@ -74,8 +74,8 @@ func (this *Conj) ToString() string {
 	if len(this.amts) == 0 {
 		return ""
 	}
-	amts_.mutex.RLock()
-	defer amts_.mutex.RUnlock()
+	amts_.RLock()
+	defer amts_.RUnlock()
 	s := "( "
 	for i, idx := range this.amts {
 		s += amts_.amts[idx].ToString()
@@ -90,8 +90,8 @@ func (this *Doc) ToString() (s string) {
 	if len(this.conjs) == 0 {
 		return ""
 	}
-	conjs_.mutex.RLock()
-	defer conjs_.mutex.RUnlock()
+	conjs_.RLock()
+	defer conjs_.RUnlock()
 	for i, idx := range this.conjs {
 		s += conjs_.conjs[idx].ToString()
 		if i+1 < len(this.conjs) {
@@ -102,32 +102,32 @@ func (this *Doc) ToString() (s string) {
 }
 
 func (this *docList) display() {
-	this.mutex.RLock()
-	defer this.mutex.RUnlock()
+	this.RLock()
+	defer this.RUnlock()
 	for i, doc := range this.docs {
 		fmt.Println("Doc[", i, "]:", doc.ToString())
 	}
 }
 
 func (this *conjList) display() {
-	this.mutex.RLock()
-	defer this.mutex.RUnlock()
+	this.RLock()
+	defer this.RUnlock()
 	for i, conj := range this.conjs {
 		fmt.Println("Conj[", i, "]", "size:", conj.size, conj.ToString())
 	}
 }
 
 func (this *amtList) display() {
-	this.mutex.RLock()
-	defer this.mutex.RUnlock()
+	this.RLock()
+	defer this.RUnlock()
 	for i, amt := range this.amts {
 		fmt.Println("Amt[", i, "]:", amt.ToString())
 	}
 }
 
 func (this *termList) display() {
-	this.mutex.RLock()
-	defer this.mutex.RUnlock()
+	this.RLock()
+	defer this.RUnlock()
 	for i, term := range this.terms {
 		fmt.Println("Term[", i, "]", term.ToString())
 	}
@@ -176,8 +176,8 @@ func DisplayConjRevs2() {
 	conjSzRvsLock.RLock()
 	defer conjSzRvsLock.RUnlock()
 
-	terms_.mutex.RLock()
-	defer terms_.mutex.RUnlock()
+	terms_.RLock()
+	defer terms_.RUnlock()
 
 	for i := 0; i < len(conjSzRvs); i++ {
 		termlist := conjSzRvs[i]

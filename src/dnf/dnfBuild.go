@@ -35,11 +35,14 @@ func Init() {
 
 /* add new doc and insert infos into reverse lists */
 func AddDoc(name string, docid string, dnfDesc string) error {
+	docs_.RLock()
 	for _, doc := range docs_.docs {
 		if doc.docid == docid {
 			return errors.New("doc " + docid + "has been added before")
 		}
 	}
+	docs_.RUnlock()
+
 	if err := DnfCheck(dnfDesc); err != nil {
 		return err
 	}
@@ -259,22 +262,22 @@ func (this *Term) Equal(term *Term) bool {
 
 /* post lists */
 type docList struct {
-	mutex sync.RWMutex
-	docs  []Doc
+	sync.RWMutex
+	docs []Doc
 }
 
 type conjList struct {
-	mutex sync.RWMutex
+	sync.RWMutex
 	conjs []Conj
 }
 
 type amtList struct {
-	mutex sync.RWMutex
-	amts  []Amt
+	sync.RWMutex
+	amts []Amt
 }
 
 type termList struct {
-	mutex sync.RWMutex
+	sync.RWMutex
 	terms []Term
 }
 
@@ -286,8 +289,8 @@ var amts_ *amtList
 var terms_ *termList
 
 func (this *docList) Add(doc *Doc) int {
-	this.mutex.Lock()
-	defer this.mutex.Unlock()
+	this.Lock()
+	defer this.Unlock()
 	doc.id = len(this.docs)
 	doc.active = true
 	if !doc.conjSorted {
@@ -299,8 +302,8 @@ func (this *docList) Add(doc *Doc) int {
 }
 
 func (this *conjList) Add(conj *Conj) (conjId int) {
-	this.mutex.Lock()
-	defer this.mutex.Unlock()
+	this.Lock()
+	defer this.Unlock()
 	for i, c := range this.conjs {
 		if c.Equal(conj) {
 			conj.id = c.id
@@ -313,14 +316,17 @@ func (this *conjList) Add(conj *Conj) (conjId int) {
 	this.conjs = append(this.conjs, *conj)
 
 	/* append reverse list */
+	conjRvsLock.Lock()
+	defer conjRvsLock.Unlock()
+
 	conjRvs = append(conjRvs, make([]int, 0))
 
 	return conj.id
 }
 
 func (this *amtList) Add(amt *Amt) (amtId int) {
-	this.mutex.Lock()
-	defer this.mutex.Unlock()
+	this.Lock()
+	defer this.Unlock()
 	for i, a := range this.amts {
 		if a.Equal(amt) {
 			amt.id = a.id
@@ -337,8 +343,8 @@ func (this *termList) Add(term *Term) (termId int) {
 		term.id = id
 		return id
 	}
-	this.mutex.Lock()
-	defer this.mutex.Unlock()
+	this.Lock()
+	defer this.Unlock()
 	// for i, t := range this.terms {
 	// 	if t.Equal(term) {
 	// 		term.id = t.id
@@ -463,8 +469,8 @@ func conjReverse2(conj *Conj) {
 		termRvsList = make([]termRvs, 0)
 	}
 
-	amts_.mutex.RLock()
-	defer amts_.mutex.RUnlock()
+	amts_.RLock()
+	defer amts_.RUnlock()
 
 	for _, amtId := range conj.amts {
 		termRvsList = insertTermRvsList(conj.id, amtId, termRvsList)
