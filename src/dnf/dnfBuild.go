@@ -1,6 +1,8 @@
 package dnf
 
 import (
+	"attribute"
+
 	"errors"
 	"sort"
 	"sync"
@@ -56,6 +58,7 @@ func doAddDoc(name string, docid string, dnf string) {
 		name:  name,
 		dnf:   dnf,
 		conjs: make([]int, 0),
+		// TODO: add attr here
 	}
 
 	var conjId int
@@ -168,6 +171,9 @@ type Doc struct {
 	conjSorted bool   /* is conjs slice sorted? */
 	conjs      []int  /* conjunction ids */
 	active     bool
+
+	/* ad attr */
+	attr *attribute.Attr
 }
 
 /*
