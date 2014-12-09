@@ -1,6 +1,7 @@
 package main
 
 import (
+	"commitor"
 	"dnf"
 
 	"fmt"
@@ -54,7 +55,13 @@ func addDocsRace() {
 	wg.Wait()
 }
 
-func main() {
+func commitor_test_main() {
+	commitor.Init()
+	commitor.GetAssocAdZone("1")
+	commitor.GetAdAttr("1")
+}
+
+func dnf_test_main() {
 	dnf.Init()
 	addDocsRace()
 
@@ -90,4 +97,8 @@ func main() {
 	}
 	fmt.Println("conds: ", conds)
 	fmt.Println("found doc: ", s)
+}
+
+func main() {
+	commitor_test_main()
 }
