@@ -57,8 +57,14 @@ func addDocsRace() {
 
 func commitor_test_main() {
 	commitor.Init()
-	commitor.GetAssocAdZone("1")
-	commitor.GetAdAttr("1")
+	// commitor.GetAssocAdZone("1")
+	// commitor.GetAdAttr("1")
+	fmt.Println("========= 1 =============")
+	commitor.PrintAdAttr("1")
+	fmt.Println("========= 2 =============")
+	commitor.PrintAdAttr("2")
+	fmt.Println("========= 3 =============")
+	commitor.PrintAdAttr("3")
 }
 
 func dnf_test_main() {

@@ -22,12 +22,20 @@ func loadDbConf() *dbConf {
 	// TODO: load conf from file
 
 	/* hehe: I won't commit those info to my github */
+	// return &dbConf{
+	// 	ip:       "someip",
+	// 	port:     "someport",
+	// 	dbname:   "somedb",
+	// 	username: "someuser",
+	// 	passwd:   "somepwd",
+	// }
+
 	return &dbConf{
-		ip:       "someip",
-		port:     "someport",
-		dbname:   "somedb",
-		username: "someuser",
-		passwd:   "somepwd",
+		ip:       "qtmysql",
+		port:     "3306",
+		dbname:   "adserver-stable",
+		username: "root",
+		passwd:   "qazxs913",
 	}
 }
 

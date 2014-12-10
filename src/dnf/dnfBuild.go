@@ -176,6 +176,20 @@ type Doc struct {
 	attr *attribute.Attr
 }
 
+func NewDoc(docid string, dnf string, name string, active bool, attr *attribute.Attr) *Doc {
+	return &Doc{
+		docid:  docid,
+		dnf:    dnf,
+		name:   name,
+		active: active,
+		attr:   attr,
+	}
+}
+
+func (doc *Doc) GetAttr() *attribute.Attr {
+	return doc.attr
+}
+
 /*
    conjunction: age ∈ { 3, 4 } and state ∈ { NY } -->
 
