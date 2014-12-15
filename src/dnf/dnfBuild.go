@@ -186,6 +186,18 @@ func NewDoc(docid string, dnf string, name string, active bool, attr *attribute.
 	}
 }
 
+func (doc *Doc) GetName() string {
+	return doc.name
+}
+
+func (doc *Doc) GetDocId() string {
+	return doc.docid
+}
+
+func (doc *Doc) GetDnf() string {
+	return doc.dnf
+}
+
 func (doc *Doc) GetAttr() *attribute.Attr {
 	return doc.attr
 }

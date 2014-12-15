@@ -29,6 +29,6 @@ func GetAdAttr(adid string) {
 func PrintAdAttr(adid string) {
 	doc := ad2Doc(adid)
 	if doc != nil {
-		fmt.Println(doc.GetAttr())
+		fmt.Println(doc.GetAttr().ToString())
 	}
 }

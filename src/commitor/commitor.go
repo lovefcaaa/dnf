@@ -3,6 +3,7 @@ package commitor
 import (
 	"database/sql"
 	"sync"
+	"time"
 
 	_ "github.com/ziutek/mymysql/godrv"
 )
@@ -22,20 +23,12 @@ func loadDbConf() *dbConf {
 	// TODO: load conf from file
 
 	/* hehe: I won't commit those info to my github */
-	// return &dbConf{
-	// 	ip:       "someip",
-	// 	port:     "someport",
-	// 	dbname:   "somedb",
-	// 	username: "someuser",
-	// 	passwd:   "somepwd",
-	// }
-
 	return &dbConf{
-		ip:       "qtmysql",
-		port:     "3306",
-		dbname:   "adserver-stable",
-		username: "root",
-		passwd:   "qazxs913",
+		ip:       "someip",
+		port:     "someport",
+		dbname:   "somedb",
+		username: "someuser",
+		passwd:   "somepwd",
 	}
 }
 
@@ -49,4 +42,15 @@ func Init() {
 			panic(err)
 		}
 	})
+}
+
+func CommitLoop() {
+	adCommit()
+	for {
+		now := time.Now()
+		if now.Hour() == 3 && now.Minute() == 2 {
+			adCommit()
+		}
+		time.Sleep(1 * time.Minute)
+	}
 }

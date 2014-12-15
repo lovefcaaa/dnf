@@ -23,6 +23,43 @@ func dbQuery(f rowsClosure, query string, args ...interface{}) (rc interface{}, 
 	return
 }
 
+func adCommit() {
+	f := func(rows *sql.Rows) interface{} {
+		banners := make([]string, 0)
+		var adid string
+		for rows.Next() {
+			if err := rows.Scan(&adid); err != nil {
+				fmt.Println("scan banner err:", err)
+				continue
+			}
+			banners = append(banners, adid)
+		}
+		return banners
+	}
+	idsInter, err := dbQuery(f, "SELECT bannerid from qtad_banners")
+	if err != nil {
+		fmt.Println("adCommit db query error:", err)
+		return
+	}
+	if ids, ok := idsInter.([]string); !ok {
+		fmt.Println("adCommit interface query error")
+		return
+	} else {
+		for _, id := range ids {
+			if doc := ad2Doc(id); doc != nil {
+				err := dnf.AddDoc(doc.GetName(), doc.GetDocId(), doc.GetDnf())
+				if err != nil {
+					fmt.Println("adCommit add doc err: ", err,
+						"id: ", doc.GetDocId(),
+						"dnf: ", doc.GetDnf())
+				} else {
+					fmt.Println("ad doc [", id, "] ok")
+				}
+			}
+		}
+	}
+}
+
 func ad2Doc(adid string) *dnf.Doc {
 	attr, err := getAdAttr(adid)
 	if err != nil {
@@ -39,7 +76,10 @@ func ad2Doc(adid string) *dnf.Doc {
 		return nil
 	}
 	if len(zoneDnf) != 0 {
-		attr.DnfDesc += " and " + zoneDnf
+		if len(attr.DnfDesc) != 0 {
+			attr.DnfDesc += " and "
+		}
+		attr.DnfDesc += zoneDnf
 	}
 	return dnf.NewDoc(adid, "( "+attr.DnfDesc+" )", "", true, &attr)
 }
@@ -69,6 +109,53 @@ func getAssocAdZone(adid string) (zoneids []string, err error) {
 	return
 }
 
+func parseValue(param string) string {
+	arr := strings.SplitN(param, ":", 3)
+	if len(arr) != 3 {
+		fmt.Println("parseValue: param: ", param, "format error")
+		return ""
+	}
+	val := strings.Trim(arr[2], " \n\"")
+	size, _ := strconv.Atoi(arr[1])
+	if len(val) == size {
+		return val
+	}
+	fmt.Println(val, "parseValue len error: len(val): ", len(val), "advise length: ", size)
+	return val
+}
+
+func parseParameters(param string) (m map[string]string, ok bool) {
+	arr := strings.SplitN(param, ":", 3)
+	if len(arr) != 3 {
+		return nil, false
+	}
+	param = strings.Trim(arr[2], "{} \n")
+	arr = strings.Split(param, ";")
+	m = make(map[string]string)
+
+	for i, s := range arr {
+		switch {
+		case s == "s:19:\"vast_video_duration\"":
+			m["duration"] = parseValue(arr[i+1])
+		case s == "s:15:\"vast_video_type\"":
+			m["type"] = parseValue(arr[i+1])
+		case s == "s:28:\"vast_video_outgoing_filename\"":
+			m["outgoing"] = parseValue(arr[i+1])
+		case s == "s:27:\"vast_video_clickthrough_url\"":
+			m["landing"] = parseValue(arr[i+1])
+		}
+	}
+
+	return m, true
+}
+
+func byteInterToString(input interface{}) (rc string) {
+	if b, ok := input.([]byte); ok {
+		rc = string(b)
+	}
+	return
+}
+
 /*
    获取广告属性
    备注: 这里的属性只是从qtad_banners表中查询的，dnf不全，
@@ -80,48 +167,92 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 			return nil
 		}
 
-		var adid, adurl, landing, tracker, width, height, conds string
+		var duration int
+		var creativeType string = "banner" // default
+		var adid, adurl, landing, tracker, width, height, conds, parameters string
 
-		err := rows.Scan(&adid, &adurl, &landing,
-			&tracker, &width, &height, &conds)
+		var adidInter, adurlInter, landingInter, trackerInter, widthInter, heightInter, condsInter, parametersInter interface{} // deal with tracker = NULL in database
+
+		err := rows.Scan(&adidInter, &adurlInter, &landingInter, &trackerInter,
+			&widthInter, &heightInter, &condsInter, &parametersInter)
 
 		if err != nil {
 			fmt.Println("in get ad attr, scan rows err:", err)
 			return nil
 		}
 
+		adid = byteInterToString(adidInter)
+		adurl = byteInterToString(adurlInter)
+		landing = byteInterToString(landingInter)
+		tracker = byteInterToString(trackerInter)
+		width = byteInterToString(widthInter)
+		height = byteInterToString(heightInter)
+		conds = byteInterToString(condsInter)
+		parameters = byteInterToString(parametersInter)
+
+		/* adurl字段为空，说明是音频广告
+		   bull shit! what fucking logic ???
+		*/
+		if len(adurl) == 0 {
+			if m, ok := parseParameters(parameters); ok {
+				adurl = m["outgoing"]
+				landing = m["landing"]
+				duration, _ = strconv.Atoi(m["duration"])
+				creativeType = m["type"]
+			}
+		}
+
 		var dnf string
 		var tr attribute.TimeRange
+
 		if dnf, tr, err = parseDnfDesc(conds); err != nil {
 			fmt.Println("limitation to dnf err: ", err)
 			return nil
 		}
 
 		var trackers []attribute.Tracker
-		if trackers, err = trackerUnmarshal(tracker); err != nil {
-			fmt.Println("in get ad attr, trackers unmarshal err:", err)
-			return nil
+
+		if len(tracker) != 0 {
+			if trackers, err = trackerUnmarshal(tracker); err != nil {
+				fmt.Println("in get ad attr, trackers unmarshal err:", err,
+					"tracker: ", tracker)
+				return nil
+			}
 		}
 
-		dnf += " and width in {" + width + "} and height in {" + height + "}"
+		//音频广告，没有width和height参数(-3)
+		if width != "-3" && height != "-3" {
+			if len(dnf) != 0 {
+				dnf += " and "
+			}
+			dnf += "width in {" + width + "} and height in {" + height + "}"
+		}
 
 		return attribute.Attr{
-			Adid:     adid,
-			DnfDesc:  dnf,
-			Adurl:    adurl,
-			Landing:  landing,
-			Width:    width,
-			Height:   height,
-			Tr:       tr,
-			Trackers: trackers,
+			Adid:         adid,
+			DnfDesc:      dnf,
+			Duration:     duration,
+			CreativeType: creativeType,
+			Adurl:        adurl,
+			Landing:      landing,
+			Width:        width,
+			Height:       height,
+			Tr:           tr,
+			Trackers:     trackers,
 		}
 	}
 
-	query := "SELECT bannerid, imageurl, url, tracker, width, height, compiledlimitation from qtad_banners where bannerid = ?"
+	query := "SELECT bannerid, imageurl, url, tracker, width, height, compiledlimitation, parameters from qtad_banners where bannerid = ?"
 
 	var rc interface{}
 	rc, err = dbQuery(f, query, adid)
-	attr, _ = rc.(attribute.Attr)
+
+	var ok bool
+	if attr, ok = rc.(attribute.Attr); !ok {
+		if err == nil {
+			err = errors.New("db query adid error")
+		}
+	}
 	return
 }
 
