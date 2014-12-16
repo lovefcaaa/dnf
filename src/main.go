@@ -13,8 +13,8 @@ func main() {
 	dnf.Init()
 	go commitor.CommitLoop()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	dnf.DisplayDocs()
 
-	service.HttpServe("/ad/search", 7777)
+	service.HttpServe("/ad/search", "/ad/zone", 7777)
 }

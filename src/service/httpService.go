@@ -1,14 +1,31 @@
 package service
 
 import (
+	"commitor"
 	"dnf"
 
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 )
 
-func searchHandler(w http.ResponseWriter, r *http.Request) {
+func httpZonesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "only get support", http.StatusMethodNotAllowed)
+		return
+	}
+	infos := commitor.GetZonesInfo()
+	rcMap := make(map[string][]commitor.ZoneInfo)
+	rcMap["zones"] = infos
+	if rc, err := json.Marshal(rcMap); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else {
+		http.Error(w, string(rc), http.StatusOK)
+	}
+}
+
+func httpSearchHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		http.Error(w, "only get support", http.StatusMethodNotAllowed)
 		return
@@ -40,7 +57,8 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, rc, http.StatusOK)
 }
 
-func HttpServe(searchUrl string, port int) {
-	http.HandleFunc(searchUrl, searchHandler)
+func HttpServe(searchUrl string, zoneUrl string, port int) {
+	http.HandleFunc(zoneUrl, httpZonesHandler)
+	http.HandleFunc(searchUrl, httpSearchHandler)
 	panic(http.ListenAndServe(":"+strconv.Itoa(port), nil))
 }

@@ -2,6 +2,7 @@ package attribute
 
 import (
 	"strconv"
+	"time"
 )
 
 type Attr struct {
@@ -37,6 +38,14 @@ func (attr *Attr) ToString() string {
 type TimeRange struct {
 	Startday int
 	Endday   int
+}
+
+func (tr *TimeRange) CoverToday() bool {
+	now := time.Now()
+	today := now.Year()*10000 +
+		int(now.Month())*100 +
+		now.Day()
+	return today >= tr.Startday && today <= tr.Endday
 }
 
 func (tr *TimeRange) ToString() string {

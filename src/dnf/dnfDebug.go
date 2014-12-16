@@ -88,7 +88,7 @@ func (this *Conj) ToString() string {
 
 func (this *Doc) ToString() (s string) {
 	if len(this.conjs) == 0 {
-		return ""
+		s = "len(conjs == 0)"
 	}
 	conjs_.RLock()
 	defer conjs_.RUnlock()
@@ -98,12 +98,15 @@ func (this *Doc) ToString() (s string) {
 			s += " ∪ "
 		}
 	}
+	s += "\n"
+	s += this.attr.ToString()
 	return
 }
 
 func (this *docList) display() {
 	this.RLock()
 	defer this.RUnlock()
+	println("len docs == ", len(this.docs))
 	for i, doc := range this.docs {
 		fmt.Println("Doc[", i, "]:", doc.ToString())
 	}

@@ -23,6 +23,44 @@ func dbQuery(f rowsClosure, query string, args ...interface{}) (rc interface{}, 
 	return
 }
 
+//TODO: 这个逻辑放在这个包里面不合理
+
+type ZoneInfo struct {
+	Zoneid   string
+	Width    string
+	Height   string
+	Version  string
+	Comments string
+}
+
+func GetZonesInfo() (rc []ZoneInfo) {
+	f := func(rows *sql.Rows) interface{} {
+		info := make([]ZoneInfo, 0)
+		for rows.Next() {
+			var zoneid, width, height, comments, version string
+			if err := rows.Scan(&zoneid, &width, &height, &comments, &version); err != nil {
+				fmt.Println("scan zone err:", err)
+				continue
+			}
+			info = append(info, ZoneInfo{
+				Zoneid:   zoneid,
+				Width:    width,
+				Height:   height,
+				Version:  version,
+				Comments: comments,
+			})
+		}
+		return info
+	}
+	zoneInfoInter, err := dbQuery(f, "SELECT zoneid, width, height, comments, version from qtad_zones")
+	if err != nil {
+		fmt.Println("GetZonesInfo db query error: ", err)
+		return
+	}
+	rc, _ = zoneInfoInter.([]ZoneInfo)
+	return
+}
+
 func adCommit() {
 	f := func(rows *sql.Rows) interface{} {
 		banners := make([]string, 0)
@@ -47,7 +85,7 @@ func adCommit() {
 	} else {
 		for _, id := range ids {
 			if doc := ad2Doc(id); doc != nil {
-				err := dnf.AddDoc(doc.GetName(), doc.GetDocId(), doc.GetDnf())
+				err := dnf.AddDoc(doc.GetName(), doc.GetDocId(), doc.GetDnf(), doc.GetAttr())
 				if err != nil {
 					fmt.Println("adCommit add doc err: ", err,
 						"id: ", doc.GetDocId(),

@@ -36,7 +36,7 @@ func Init() {
 }
 
 /* add new doc and insert infos into reverse lists */
-func AddDoc(name string, docid string, dnfDesc string) error {
+func AddDoc(name string, docid string, dnfDesc string, attr *attribute.Attr) error {
 	docs_.RLock()
 	for _, doc := range docs_.docs {
 		if doc.docid == docid {
@@ -48,17 +48,17 @@ func AddDoc(name string, docid string, dnfDesc string) error {
 	if err := DnfCheck(dnfDesc); err != nil {
 		return err
 	}
-	doAddDoc(name, docid, dnfDesc)
+	doAddDoc(name, docid, dnfDesc, attr)
 	return nil
 }
 
-func doAddDoc(name string, docid string, dnf string) {
+func doAddDoc(name string, docid string, dnf string, attr *attribute.Attr) {
 	doc := &Doc{
 		docid: docid,
 		name:  name,
 		dnf:   dnf,
 		conjs: make([]int, 0),
-		// TODO: add attr here
+		attr:  attr,
 	}
 
 	var conjId int

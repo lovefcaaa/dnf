@@ -63,7 +63,17 @@ func getDocs(conjs []int) (docs []int) {
 			continue
 		}
 		for _, doc := range doclist {
-			set.Add(doc)
+			inTime := false
+
+			docs_.Lock()
+			if docs_.docs[doc].attr.Tr.CoverToday() {
+				inTime = true
+			}
+			docs_.Unlock()
+
+			if inTime {
+				set.Add(doc)
+			}
 		}
 	}
 	return set.ToSlice()
