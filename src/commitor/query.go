@@ -33,12 +33,12 @@ type ZoneInfo struct {
 	Comments string
 }
 
-func GetZonesInfo() (rc []ZoneInfo) {
+func GetZonesInfo(version int) (rc []ZoneInfo) {
 	f := func(rows *sql.Rows) interface{} {
 		info := make([]ZoneInfo, 0)
 		for rows.Next() {
-			var zoneid, width, height, comments, version string
-			if err := rows.Scan(&zoneid, &width, &height, &comments, &version); err != nil {
+			var zoneid, width, height, comments string
+			if err := rows.Scan(&zoneid, &width, &height, &comments); err != nil {
 				fmt.Println("scan zone err:", err)
 				continue
 			}
@@ -46,13 +46,12 @@ func GetZonesInfo() (rc []ZoneInfo) {
 				Zoneid:   zoneid,
 				Width:    width,
 				Height:   height,
-				Version:  version,
 				Comments: comments,
 			})
 		}
 		return info
 	}
-	zoneInfoInter, err := dbQuery(f, "SELECT zoneid, width, height, comments, version from qtad_zones")
+	zoneInfoInter, err := dbQuery(f, "SELECT zoneid, width, height, comments from qtad_zones where version = ?", version)
 	if err != nil {
 		fmt.Println("GetZonesInfo db query error: ", err)
 		return

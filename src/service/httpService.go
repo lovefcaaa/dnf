@@ -11,11 +11,19 @@ import (
 )
 
 func httpZonesHandler(w http.ResponseWriter, r *http.Request) {
+	var version int
 	if r.Method != "GET" {
 		http.Error(w, "only get support", http.StatusMethodNotAllowed)
 		return
 	}
-	infos := commitor.GetZonesInfo()
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "parse form error", http.StatusForbidden)
+		return
+	}
+	if len(r.Form["version"]) != 0 {
+		version, _ = strconv.Atoi(r.Form["version"][0])
+	}
+	infos := commitor.GetZonesInfo(version)
 	rcMap := make(map[string][]commitor.ZoneInfo)
 	rcMap["zones"] = infos
 	if rc, err := json.Marshal(rcMap); err != nil {

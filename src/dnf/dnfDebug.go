@@ -112,6 +112,24 @@ func (this *docList) display() {
 	}
 }
 
+func (this *docList) docId2Map(docid int) map[string]interface{} {
+	if len(this.docs) <= docid {
+		return nil
+	}
+	this.RLock()
+	defer this.RUnlock()
+	m := make(map[string]interface{})
+	doc := &this.docs[docid]
+	m["id"] = doc.docid
+	m["restype"] = doc.attr.CreativeType // TODO: 0: banner, 1: audio
+	// TODO:
+	return m
+}
+
+func DocId2Map(docid int) map[string]interface{} {
+	return docs_.docId2Map(docid)
+}
+
 func (this *conjList) display() {
 	this.RLock()
 	defer this.RUnlock()

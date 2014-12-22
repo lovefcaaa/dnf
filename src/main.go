@@ -16,5 +16,6 @@ func main() {
 	time.Sleep(3 * time.Second)
 	dnf.DisplayDocs()
 
+	go service.TcpServe()
 	service.HttpServe("/ad/search", "/ad/zone", 7777)
 }
