@@ -22,7 +22,7 @@ type dbConf struct {
 func loadDbConf() *dbConf {
 	// TODO: load conf from file
 
-	/* hehe: I won't commit those info to git */
+	/* hehe: I won't commit those info to my github */
 	return &dbConf{
 		ip:       "someip",
 		port:     "someport",
@@ -48,13 +48,9 @@ func CommitLoop() {
 	adCommit()
 	for {
 		time.Sleep(1 * time.Minute)
-		//time.Sleep(1 * time.Second)
 		now := time.Now()
 		if now.Hour() == 3 && now.Minute() == 2 {
 			adCommit()
 		}
-		// if now.Second() == 2 {
-		// 	adCommit()
-		// }
 	}
 }

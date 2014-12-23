@@ -37,13 +37,20 @@ func Init() {
 
 /* add new doc and insert infos into reverse lists */
 func AddDoc(name string, docid string, dnfDesc string, attr *attribute.Attr) error {
-	docs_.RLock()
-	for _, doc := range docs_.docs {
-		if doc.docid == docid {
-			return errors.New("doc " + docid + "has been added before")
+	f := func() error {
+		docs_.RLock()
+		defer docs_.RUnlock()
+		for _, doc := range docs_.docs {
+			if doc.docid == docid {
+				return errors.New("doc " + docid + "has been added before")
+			}
 		}
+		return nil
 	}
-	docs_.RUnlock()
+
+	if err := f(); err != nil {
+		return err
+	}
 
 	if err := DnfCheck(dnfDesc); err != nil {
 		return err

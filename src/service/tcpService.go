@@ -6,9 +6,11 @@ import (
 
 	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -24,46 +26,49 @@ func tcpIndexHandler(conn net.Conn) {
 	*/
 	defer conn.Close()
 
-	var magic, size int32
-	var data []byte
+	for {
+		var magic, size int32
+		var data []byte
 
-	if err := binary.Read(conn, binary.LittleEndian, &magic); err != nil {
-		fmt.Println("Read magic error:", err)
-		return
+		if err := binary.Read(conn, binary.LittleEndian, &magic); err != nil {
+			fmt.Println("Read magic error:", err)
+			return
+		}
+
+		if magic != 0xDEAD {
+			fmt.Println("magic number error:", magic)
+			return
+		}
+
+		if err := binary.Read(conn, binary.LittleEndian, &size); err != nil {
+			fmt.Println("Read size error:", err)
+			return
+		}
+
+		if size <= 0 {
+			fmt.Println("Size error:", size)
+			return
+		}
+
+		data = make([]byte, int(size))
+
+		if _, err := io.ReadFull(conn, data); err != nil {
+			fmt.Println("Read data error:", err)
+			return
+		}
+
+		if err := handleIndexRequestData(conn, data); err != nil {
+			fmt.Println("handleIndexRequestData error:", err)
+			return
+		}
 	}
-
-	if magic != 0xDEAD {
-		fmt.Println("magic number error:", magic)
-		return
-	}
-
-	if err := binary.Read(conn, binary.LittleEndian, &size); err != nil {
-		fmt.Println("Read size error:", err)
-		return
-	}
-
-	if size <= 0 {
-		fmt.Println("Size error:", size)
-		return
-	}
-
-	data = make([]byte, int(size))
-
-	if _, err := io.ReadFull(conn, data); err != nil {
-		fmt.Println("Read data error:", err)
-		return
-	}
-
-	fmt.Println("read size: ", size, "data size: ", len(data), " data: ", string(data))
-
-	handleIndexRequestData(conn, data)
 }
 
-func handleIndexRequestData(conn net.Conn, data []byte) {
+func handleIndexRequestData(conn net.Conn, data []byte) error {
 	conds := make([]dnf.Cond, 0)
 	params := strings.Split(string(data), "&")
 	if len(params) == 0 {
-		return
+		return errors.New("param error")
 	}
 	for i := 0; i != len(params); i++ {
 		kv := strings.SplitN(params[i], "=", 2)
@@ -72,28 +77,28 @@ func handleIndexRequestData(conn net.Conn, data []byte) {
 		}
 
 		if kv[0] == "query" {
-			// TODO: parse query string
-			vals := strings.Split(kv[0], "/")
-			if len(vals) == 0 {
+			kv[1], _ = url.QueryUnescape(kv[1])
+			vals := strings.Split(kv[1], "/")
+			if len(vals) <= 1 {
 				continue
 			}
 
-			switch vals[0] {
+			switch vals[1] {
 			case "0": /* splash: /0/[width]/[height] */
-				if len(vals) != 3 {
+				if len(vals) != 4 {
 					fmt.Println("query string err: ", kv[1])
 					continue
 				}
-				conds = append(conds, dnf.Cond{Key: "width", Val: vals[1]})
-				conds = append(conds, dnf.Cond{Key: "height", Val: vals[2]})
+				conds = append(conds, dnf.Cond{Key: "width", Val: vals[2]})
+				conds = append(conds, dnf.Cond{Key: "height", Val: vals[3]})
 
 			case "1": /* banner: /1/[cateid]/[pos]/[width]/[height] */
-				if len(vals) != 5 {
+				if len(vals) != 6 {
 					fmt.Println("query string err: ", kv[1])
 					continue
 				}
-				conds = append(conds, dnf.Cond{Key: "width", Val: vals[3]})
-				conds = append(conds, dnf.Cond{Key: "height", Val: vals[4]})
+				conds = append(conds, dnf.Cond{Key: "width", Val: vals[4]})
+				conds = append(conds, dnf.Cond{Key: "height", Val: vals[5]})
 
 			default:
 				continue
@@ -106,9 +111,12 @@ func handleIndexRequestData(conn net.Conn, data []byte) {
 	}
 
 	var repData string
+
+	fmt.Printf("search cond: %+v\n", conds)
+
 	if docs, err := dnf.Search(conds); err != nil {
 		fmt.Println("dnf Search err:", err)
-		return
+		return err
 	} else {
 		adlist := make([]interface{}, 0)
 		for _, doc := range docs {
@@ -120,13 +128,15 @@ func handleIndexRequestData(conn net.Conn, data []byte) {
 		m["data"] = adlist
 		rc, _ := json.Marshal(m)
 		repData = string(rc)
+		fmt.Println("rep data = ", repData)
 	}
 
 	magic := int32(0xBEEF)
 	size := int32(len(repData))
 	binary.Write(conn, binary.LittleEndian, &magic)
 	binary.Write(conn, binary.LittleEndian, &size)
-	conn.Write([]byte(repData))
+	_, err := conn.Write([]byte(repData))
+	return err
 }
 
 func tcpZonesHandler(conn net.Conn) {
@@ -141,44 +151,44 @@ func tcpZonesHandler(conn net.Conn) {
 	*/
 	defer conn.Close()
 
-	var magic, size, version int32
-	var data []byte
+	for {
+		var magic, size, version int32
+		var data []byte
 
-	if err := binary.Read(conn, binary.LittleEndian, &magic); err != nil {
-		fmt.Println("Read magic error:", err)
-		return
+		if err := binary.Read(conn, binary.LittleEndian, &magic); err != nil {
+			fmt.Println("Read magic error:", err)
+			return
+		}
+
+		if magic != 0xCAFE {
+			fmt.Println("magic number error:", magic)
+			return
+		}
+
+		if err := binary.Read(conn, binary.LittleEndian, &size); err != nil {
+			fmt.Println("Read size error:", err)
+			return
+		}
+
+		if size <= 0 {
+			fmt.Println("Size error:", size)
+			return
+		}
+
+		if err := binary.Read(conn, binary.LittleEndian, &version); err != nil {
+			fmt.Println("Read version error:", err)
+			return
+		}
+
+		data = make([]byte, int(size))
+
+		if _, err := io.ReadFull(conn, data); err != nil {
+			fmt.Println("Read data error:", err)
+			return
+		}
+
+		handleZoneRequestData(conn, data, int(version))
 	}
-
-	if magic != 0xCAFE {
-		fmt.Println("magic number error:", magic)
-		return
-	}
-
-	if err := binary.Read(conn, binary.LittleEndian, &size); err != nil {
-		fmt.Println("Read size error:", err)
-		return
-	}
-
-	if size <= 0 {
-		fmt.Println("Size error:", size)
-		return
-	}
-
-	if err := binary.Read(conn, binary.LittleEndian, &version); err != nil {
-		fmt.Println("Read version error:", err)
-		return
-	}
-
-	data = make([]byte, int(size))
-
-	if _, err := io.ReadFull(conn, data); err != nil {
-		fmt.Println("Read data error:", err)
-		return
-	}
-
-	fmt.Println("read size: ", size, "data size: ", len(data), " data: ", string(data))
-
-	handleZoneRequestData(conn, data, int(version))
 }
 
 func handleZoneRequestData(conn net.Conn, data []byte, version int) {
