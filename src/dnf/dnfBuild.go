@@ -301,13 +301,6 @@ type termList struct {
 	terms []Term
 }
 
-//var termMap map[string]int
-//
-//var docs_ *docList
-//var conjs_ *conjList
-//var amts_ *amtList
-//var terms_ *termList
-
 func (this *docList) Add(doc *Doc, h *Handler) int {
 	this.Lock()
 	defer this.Unlock()
@@ -380,8 +373,6 @@ func (this *termList) Add(term *Term, h *Handler) (termId int) {
                  |
                  +--> doc1.id --> doc3.id --> docN.id
 */
-// var conjRvsLock sync.RWMutex
-// var conjRvs [][]int
 
 /* build the first layer reverse list */
 func (h *Handler) conjReverse1(docId int, conjIds []int) {
@@ -463,9 +454,6 @@ func (p termRvsSlice) Swap(i, j int) {
 	p[i].termId, p[j].termId = p[j].termId, p[i].termId
 	p[i].cList, p[j].cList = p[j].cList, p[i].cList
 }
-
-//var conjSzRvsLock sync.RWMutex
-//var conjSzRvs [][]termRvs
 
 /* build the second layer reverse list */
 func (h *Handler) conjReverse2(conj *Conj) {
