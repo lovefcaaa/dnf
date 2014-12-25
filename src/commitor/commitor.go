@@ -48,9 +48,9 @@ func CommitLoop() {
 	adCommit()
 	for {
 		time.Sleep(1 * time.Minute)
-		now := time.Now()
-		if now.Hour() == 3 && now.Minute() == 2 {
-			adCommit()
-		}
+		//now := time.Now()
+		//if now.Hour() == 3 && now.Minute() == 2 {
+		adCommit()
+		//}
 	}
 }

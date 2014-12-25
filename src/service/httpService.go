@@ -51,7 +51,13 @@ func httpSearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var rc string
-	if docs, err := dnf.Search(conds); err != nil {
+	h := dnf.GetHandler()
+	if h == nil {
+		http.Error(w, "interal error", http.StatusOK)
+		return
+	}
+
+	if docs, err := h.Search(conds); err != nil {
 		rc = fmt.Sprint("dnf search err: ", err)
 		fmt.Println("dnf search err:", err)
 	} else if len(docs) == 0 {

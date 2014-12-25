@@ -82,9 +82,10 @@ func adCommit() {
 		fmt.Println("adCommit interface query error")
 		return
 	} else {
+		h := dnf.NewHandler()
 		for _, id := range ids {
 			if doc := ad2Doc(id); doc != nil {
-				err := dnf.AddDoc(doc.GetName(), doc.GetDocId(), doc.GetDnf(), doc.GetAttr())
+				err := h.AddDoc(doc.GetName(), doc.GetDocId(), doc.GetDnf(), doc.GetAttr())
 				if err != nil {
 					fmt.Println("adCommit add doc err: ", err,
 						"id: ", doc.GetDocId(),
@@ -94,6 +95,7 @@ func adCommit() {
 				}
 			}
 		}
+		dnf.SaveHandler(h)
 	}
 }
 

@@ -26,50 +26,50 @@ func searchCondCheck(conds []Cond) error {
 	return nil
 }
 
-func Search(conds []Cond) (docs []int, err error) {
+func (h *Handler) Search(conds []Cond) (docs []int, err error) {
 	if err := searchCondCheck(conds); err != nil {
 		return nil, err
 	}
 	termids := make([]int, 0)
 	for i := 0; i < len(conds); i++ {
-		if id, ok := termMap[conds[i].Key+"%"+conds[i].Val]; ok {
+		if id, ok := h.termMap[conds[i].Key+"%"+conds[i].Val]; ok {
 			termids = append(termids, id)
 		}
 	}
 	if len(termids) == 0 {
 		return nil, errors.New("All cond are not in inverse list")
 	}
-	return doSearch(termids), nil
+	return h.doSearch(termids), nil
 }
 
-func doSearch(terms []int) (docs []int) {
-	conjs := getConjs(terms)
+func (h *Handler) doSearch(terms []int) (docs []int) {
+	conjs := h.getConjs(terms)
 	if len(conjs) == 0 {
 		return nil
 	}
-	return getDocs(conjs)
+	return h.getDocs(conjs)
 }
 
-func getDocs(conjs []int) (docs []int) {
-	conjRvsLock.RLock()
-	defer conjRvsLock.RUnlock()
+func (h *Handler) getDocs(conjs []int) (docs []int) {
+	h.conjRvsLock.RLock()
+	defer h.conjRvsLock.RUnlock()
 
 	set := set.NewIntSet()
 
 	for _, conj := range conjs {
-		ASSERT(conj < len(conjRvs))
-		doclist := conjRvs[conj]
+		ASSERT(conj < len(h.conjRvs))
+		doclist := h.conjRvs[conj]
 		if doclist == nil {
 			continue
 		}
 		for _, doc := range doclist {
 			inTime := false
 
-			docs_.RLock()
-			if docs_.docs[doc].attr.Tr.CoverToday() {
+			h.docs_.RLock()
+			if h.docs_.docs[doc].attr.Tr.CoverToday() {
 				inTime = true
 			}
-			docs_.RUnlock()
+			h.docs_.RUnlock()
 
 			if inTime {
 				set.Add(doc)
@@ -79,20 +79,20 @@ func getDocs(conjs []int) (docs []int) {
 	return set.ToSlice()
 }
 
-func getConjs(terms []int) (conjs []int) {
-	conjSzRvsLock.RLock()
-	defer conjSzRvsLock.RUnlock()
+func (h *Handler) getConjs(terms []int) (conjs []int) {
+	h.conjSzRvsLock.RLock()
+	defer h.conjSzRvsLock.RUnlock()
 
 	n := len(terms)
-	ASSERT(len(conjSzRvs) > 0)
-	if n >= len(conjSzRvs) {
-		n = len(conjSzRvs) - 1
+	ASSERT(len(h.conjSzRvs) > 0)
+	if n >= len(h.conjSzRvs) {
+		n = len(h.conjSzRvs) - 1
 	}
 
 	conjSet := set.NewIntSet()
 
 	for i := 0; i <= n; i++ {
-		termlist := conjSzRvs[i]
+		termlist := h.conjSzRvs[i]
 		if termlist == nil || len(termlist) == 0 {
 			continue
 		}

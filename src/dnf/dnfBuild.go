@@ -13,34 +13,15 @@ var once sync.Once
 func Init() {
 	once.Do(func() {
 		debugInit()
-
-		/* post list */
-		docs_ = &docList{docs: make([]Doc, 0, 16)}
-		conjs_ = &conjList{conjs: make([]Conj, 0, 16)}
-		amts_ = &amtList{amts: make([]Amt, 0, 16)}
-		terms_ = &termList{terms: make([]Term, 0, 16)}
-		termMap = make(map[string]int)
-
-		/* empty set ∅ */
-		terms_.terms = append(terms_.terms, Term{id: 0, key: "", val: ""})
-
-		/* reverse list */
-		conjRvs = make([][]int, 0)
-		conjSzRvs = make([][]termRvs, 16)
-
-		/* empty set ∅ reverse list */
-		termrvslist := make([]termRvs, 0, 1)
-		termrvslist = append(termrvslist, termRvs{termId: 0, cList: make([]cPair, 0)})
-		conjSzRvs[0] = termrvslist
 	})
 }
 
 /* add new doc and insert infos into reverse lists */
-func AddDoc(name string, docid string, dnfDesc string, attr *attribute.Attr) error {
+func (h *Handler) AddDoc(name string, docid string, dnfDesc string, attr *attribute.Attr) error {
 	f := func() error {
-		docs_.RLock()
-		defer docs_.RUnlock()
-		for _, doc := range docs_.docs {
+		h.docs_.RLock()
+		defer h.docs_.RUnlock()
+		for _, doc := range h.docs_.docs {
 			if doc.docid == docid {
 				return errors.New("doc " + docid + "has been added before")
 			}
@@ -55,11 +36,11 @@ func AddDoc(name string, docid string, dnfDesc string, attr *attribute.Attr) err
 	if err := DnfCheck(dnfDesc); err != nil {
 		return err
 	}
-	doAddDoc(name, docid, dnfDesc, attr)
+	h.doAddDoc(name, docid, dnfDesc, attr)
 	return nil
 }
 
-func doAddDoc(name string, docid string, dnf string, attr *attribute.Attr) {
+func (h *Handler) doAddDoc(name string, docid string, dnf string, attr *attribute.Attr) {
 	doc := &Doc{
 		docid: docid,
 		name:  name,
@@ -73,7 +54,7 @@ func doAddDoc(name string, docid string, dnf string, attr *attribute.Attr) {
 
 	i := skipSpace(&dnf, 0)
 	for {
-		i, conjId = conjParse(&dnf, i)
+		i, conjId = h.conjParse(&dnf, i)
 		doc.conjs = append(doc.conjs, conjId)
 		i = skipSpace(&dnf, i+1)
 		if i >= len(dnf) {
@@ -83,14 +64,14 @@ func doAddDoc(name string, docid string, dnf string, attr *attribute.Attr) {
 		ASSERT(orStr == "or")
 		i = skipSpace(&dnf, i+1)
 	}
-	docInternalId := docs_.Add(doc)
-	conjReverse1(docInternalId, doc.conjs)
+	docInternalId := h.docs_.Add(doc, h)
+	h.conjReverse1(docInternalId, doc.conjs)
 }
 
 /*
 conj: ( age in {3, 4} and state not in {CA, NY })
 */
-func conjParse(dnf *string, i int) (endIndex int, conjId int) {
+func (h *Handler) conjParse(dnf *string, i int) (endIndex int, conjId int) {
 	var key, val string
 	var vals []string
 	var belong bool
@@ -132,7 +113,7 @@ func conjParse(dnf *string, i int) (endIndex int, conjId int) {
 			}
 			ASSERT((*dnf)[i] == ',')
 		}
-		amtId := amtBuild(key, vals, belong)
+		amtId := h.amtBuild(key, vals, belong)
 		conj.amts = append(conj.amts, amtId)
 		if belong {
 			conj.size++
@@ -141,11 +122,11 @@ func conjParse(dnf *string, i int) (endIndex int, conjId int) {
 		/* get next assignment or end of this conjunction */
 		i = skipSpace(dnf, i+1)
 		if (*dnf)[i] == ')' {
-			conjId = conjs_.Add(conj)
+			conjId = h.conjs_.Add(conj, h)
 			endIndex = i
 
 			/* reverse list insert */
-			conjReverse2(conj)
+			h.conjReverse2(conj)
 			return
 		}
 
@@ -154,14 +135,14 @@ func conjParse(dnf *string, i int) (endIndex int, conjId int) {
 	}
 }
 
-func amtBuild(key string, vals []string, belong bool) (amtId int) {
+func (h *Handler) amtBuild(key string, vals []string, belong bool) (amtId int) {
 	amt := &Amt{terms: make([]int, 0), belong: belong}
 	for _, val := range vals {
 		term := &Term{key: key, val: val}
-		tid := terms_.Add(term)
+		tid := h.terms_.Add(term, h)
 		amt.terms = append(amt.terms, tid)
 	}
-	return amts_.Add(amt)
+	return h.amts_.Add(amt, h)
 }
 
 /*
@@ -320,14 +301,14 @@ type termList struct {
 	terms []Term
 }
 
-var termMap map[string]int
+//var termMap map[string]int
+//
+//var docs_ *docList
+//var conjs_ *conjList
+//var amts_ *amtList
+//var terms_ *termList
 
-var docs_ *docList
-var conjs_ *conjList
-var amts_ *amtList
-var terms_ *termList
-
-func (this *docList) Add(doc *Doc) int {
+func (this *docList) Add(doc *Doc, h *Handler) int {
 	this.Lock()
 	defer this.Unlock()
 	doc.id = len(this.docs)
@@ -340,7 +321,7 @@ func (this *docList) Add(doc *Doc) int {
 	return doc.id
 }
 
-func (this *conjList) Add(conj *Conj) (conjId int) {
+func (this *conjList) Add(conj *Conj, h *Handler) (conjId int) {
 	this.Lock()
 	defer this.Unlock()
 	for i, c := range this.conjs {
@@ -355,15 +336,15 @@ func (this *conjList) Add(conj *Conj) (conjId int) {
 	this.conjs = append(this.conjs, *conj)
 
 	/* append reverse list */
-	conjRvsLock.Lock()
-	defer conjRvsLock.Unlock()
+	h.conjRvsLock.Lock()
+	defer h.conjRvsLock.Unlock()
 
-	conjRvs = append(conjRvs, make([]int, 0))
+	h.conjRvs = append(h.conjRvs, make([]int, 0))
 
 	return conj.id
 }
 
-func (this *amtList) Add(amt *Amt) (amtId int) {
+func (this *amtList) Add(amt *Amt, h *Handler) (amtId int) {
 	this.Lock()
 	defer this.Unlock()
 	for i, a := range this.amts {
@@ -377,22 +358,16 @@ func (this *amtList) Add(amt *Amt) (amtId int) {
 	return amt.id
 }
 
-func (this *termList) Add(term *Term) (termId int) {
-	if id, ok := termMap[term.key+"%"+term.val]; ok {
-		term.id = id
-		return id
+func (this *termList) Add(term *Term, h *Handler) (termId int) {
+	if tid, ok := h.termMap[term.key+"%"+term.val]; ok {
+		term.id = tid
+		return term.id
 	}
 	this.Lock()
 	defer this.Unlock()
-	// for i, t := range this.terms {
-	// 	if t.Equal(term) {
-	// 		term.id = t.id
-	// 		return i
-	// 	}
-	// }
 	term.id = len(this.terms)
 	this.terms = append(this.terms, *term)
-	termMap[term.key+"%"+term.val] = term.id
+	h.termMap[term.key+"%"+term.val] = term.id
 	return term.id
 }
 
@@ -405,17 +380,17 @@ func (this *termList) Add(term *Term) (termId int) {
                  |
                  +--> doc1.id --> doc3.id --> docN.id
 */
-var conjRvsLock sync.RWMutex
-var conjRvs [][]int
+// var conjRvsLock sync.RWMutex
+// var conjRvs [][]int
 
 /* build the first layer reverse list */
-func conjReverse1(docId int, conjIds []int) {
-	conjRvsLock.Lock()
-	defer conjRvsLock.Unlock()
-	rvsLen := len(conjRvs)
+func (h *Handler) conjReverse1(docId int, conjIds []int) {
+	h.conjRvsLock.Lock()
+	defer h.conjRvsLock.Unlock()
+	rvsLen := len(h.conjRvs)
 	for _, conjId := range conjIds {
 		ASSERT(rvsLen > conjId)
-		rvsDocList := conjRvs[conjId]
+		rvsDocList := h.conjRvs[conjId]
 
 		/* append docId to rvsDocList and promise rvsDocList sorted */
 		pos := sort.IntSlice(rvsDocList).Search(docId)
@@ -430,7 +405,7 @@ func conjReverse1(docId int, conjIds []int) {
 				sort.IntSlice(rvsDocList).Sort()
 			}
 		}
-		conjRvs[conjId] = rvsDocList
+		h.conjRvs[conjId] = rvsDocList
 	}
 }
 
@@ -489,50 +464,50 @@ func (p termRvsSlice) Swap(i, j int) {
 	p[i].cList, p[j].cList = p[j].cList, p[i].cList
 }
 
-var conjSzRvsLock sync.RWMutex
-var conjSzRvs [][]termRvs
+//var conjSzRvsLock sync.RWMutex
+//var conjSzRvs [][]termRvs
 
 /* build the second layer reverse list */
-func conjReverse2(conj *Conj) {
-	conjSzRvsLock.Lock()
-	defer conjSzRvsLock.Unlock()
+func (h *Handler) conjReverse2(conj *Conj) {
+	h.conjSzRvsLock.Lock()
+	defer h.conjSzRvsLock.Unlock()
 
-	if conj.size >= len(conjSzRvs) {
-		resizeConjSzRvs(conj.size + 1)
+	if conj.size >= len(h.conjSzRvs) {
+		h.resizeConjSzRvs(conj.size + 1)
 	}
 
-	termRvsList := conjSzRvs[conj.size]
-	defer func() { conjSzRvs[conj.size] = termRvsList }()
+	termRvsList := h.conjSzRvs[conj.size]
+	defer func() { h.conjSzRvs[conj.size] = termRvsList }()
 
 	if termRvsList == nil {
 		termRvsList = make([]termRvs, 0)
 	}
 
-	amts_.RLock()
-	defer amts_.RUnlock()
+	h.amts_.RLock()
+	defer h.amts_.RUnlock()
 
 	for _, amtId := range conj.amts {
-		termRvsList = insertTermRvsList(conj.id, amtId, termRvsList)
+		termRvsList = h.insertTermRvsList(conj.id, amtId, termRvsList)
 	}
 	if conj.size == 0 {
-		insertTermRvsListEmptySet(conj.id)
+		h.insertTermRvsListEmptySet(conj.id)
 	}
 }
 
-func insertTermRvsListEmptySet(cid int) {
-	termrvslist := conjSzRvs[0]
+func (h *Handler) insertTermRvsListEmptySet(cid int) {
+	termrvslist := h.conjSzRvs[0]
 	clist := termrvslist[0].cList
 	defer func() { termrvslist[0].cList = clist }()
 	clist = insertClist(cid, true, clist)
 }
 
-func resizeConjSzRvs(size int) {
-	ASSERT(size >= len(conjSzRvs))
+func (h *Handler) resizeConjSzRvs(size int) {
+	ASSERT(size >= len(h.conjSzRvs))
 	size = upperPowerOfTwo(size)
 	tmp := make([][]termRvs, size)
-	copy(tmp[:len(conjSzRvs)], conjSzRvs[:])
-	conjSzRvs = tmp
-	ASSERT(len(conjSzRvs) == size)
+	copy(tmp[:len(h.conjSzRvs)], h.conjSzRvs[:])
+	h.conjSzRvs = tmp
+	ASSERT(len(h.conjSzRvs) == size)
 }
 
 func upperPowerOfTwo(size int) int {
@@ -544,8 +519,8 @@ func upperPowerOfTwo(size int) int {
 	return a
 }
 
-func insertTermRvsList(conjId int, amtId int, list []termRvs) []termRvs {
-	amt := &amts_.amts[amtId]
+func (h *Handler) insertTermRvsList(conjId int, amtId int, list []termRvs) []termRvs {
+	amt := &h.amts_.amts[amtId]
 
 	for _, tid := range amt.terms {
 		idx := sort.Search(len(list), func(i int) bool { return list[i].termId >= tid })

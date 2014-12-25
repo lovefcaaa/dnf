@@ -114,7 +114,12 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 
 	fmt.Printf("search cond: %+v\n", conds)
 
-	if docs, err := dnf.Search(conds); err != nil {
+	h := dnf.GetHandler()
+	if h == nil {
+		return errors.New("cannot get dnf handler")
+	}
+
+	if docs, err := h.Search(conds); err != nil {
 		fmt.Println("dnf Search err:", err)
 		return err
 	} else {

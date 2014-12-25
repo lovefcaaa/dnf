@@ -49,8 +49,9 @@ func (this *Amt) ToString() string {
 		return ""
 	}
 
-	terms_.RLock()
-	defer terms_.RUnlock()
+	h := GetHandler()
+	h.terms_.RLock()
+	defer h.terms_.RUnlock()
 
 	var key, op string
 
@@ -59,10 +60,10 @@ func (this *Amt) ToString() string {
 	} else {
 		op = "∉"
 	}
-	key = terms_.terms[this.terms[0]].key
+	key = h.terms_.terms[this.terms[0]].key
 	s := fmt.Sprintf("%s %s { ", key, op)
 	for i, idx := range this.terms {
-		s += terms_.terms[idx].val
+		s += h.terms_.terms[idx].val
 		if i+1 < len(this.terms) {
 			s += ", "
 		}
@@ -74,11 +75,13 @@ func (this *Conj) ToString() string {
 	if len(this.amts) == 0 {
 		return ""
 	}
-	amts_.RLock()
-	defer amts_.RUnlock()
+	/* bugs to fix here */
+	h := GetHandler()
+	h.amts_.RLock()
+	defer h.amts_.RUnlock()
 	s := "( "
 	for i, idx := range this.amts {
-		s += amts_.amts[idx].ToString()
+		s += h.amts_.amts[idx].ToString()
 		if i+1 < len(this.amts) {
 			s += " ∩ "
 		}
@@ -90,10 +93,11 @@ func (this *Doc) ToString() (s string) {
 	if len(this.conjs) == 0 {
 		s = "len(conjs == 0)"
 	}
-	conjs_.RLock()
-	defer conjs_.RUnlock()
+	h := GetHandler()
+	h.conjs_.RLock()
+	defer h.conjs_.RUnlock()
 	for i, idx := range this.conjs {
-		s += conjs_.conjs[idx].ToString()
+		s += h.conjs_.conjs[idx].ToString()
 		if i+1 < len(this.conjs) {
 			s += " ∪ "
 		}
@@ -145,7 +149,7 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 }
 
 func DocId2Map(docid int) map[string]interface{} {
-	return docs_.docId2Map(docid)
+	return GetHandler().docs_.docId2Map(docid)
 }
 
 func (this *conjList) display() {
@@ -181,26 +185,27 @@ func display(obj displayer) {
 }
 
 func DisplayDocs() {
-	display(docs_)
+	display(GetHandler().docs_)
 }
 
 func DisplayConjs() {
-	display(conjs_)
+	display(GetHandler().conjs_)
 }
 
 func DisplayAmts() {
-	display(amts_)
+	display(GetHandler().amts_)
 }
 
 func DisplayTerms() {
-	display(terms_)
+	display(GetHandler().terms_)
 }
 
 func DisplayConjRevs() {
 	fmt.Println("reverse list 1: ")
-	conjRvsLock.RLock()
-	defer conjRvsLock.RUnlock()
-	for i, docs := range conjRvs {
+	h := GetHandler()
+	h.conjRvsLock.RLock()
+	defer h.conjRvsLock.RUnlock()
+	for i, docs := range h.conjRvs {
 		s := fmt.Sprint("conj[", i, "]: -> ")
 		for _, id := range docs {
 			s += strconv.Itoa(id) + " -> "
@@ -212,20 +217,21 @@ func DisplayConjRevs() {
 func DisplayConjRevs2() {
 	fmt.Println("reverse list 2: ")
 
-	conjSzRvsLock.RLock()
-	defer conjSzRvsLock.RUnlock()
+	h := GetHandler()
+	h.conjSzRvsLock.RLock()
+	defer h.conjSzRvsLock.RUnlock()
 
-	terms_.RLock()
-	defer terms_.RUnlock()
+	h.terms_.RLock()
+	defer h.terms_.RUnlock()
 
-	for i := 0; i < len(conjSzRvs); i++ {
-		termlist := conjSzRvs[i]
+	for i := 0; i < len(h.conjSzRvs); i++ {
+		termlist := h.conjSzRvs[i]
 		if termlist == nil || len(termlist) == 0 {
 			continue
 		}
 		fmt.Println("***** size:", i, "*****")
 		for _, termrvs := range termlist {
-			s := fmt.Sprint(terms_.terms[termrvs.termId].ToString(), " -> ")
+			s := fmt.Sprint(h.terms_.terms[termrvs.termId].ToString(), " -> ")
 			for _, cpair := range termrvs.cList {
 				var op string
 				if cpair.belong {
