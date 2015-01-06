@@ -1,7 +1,7 @@
 package dnf
 
 import (
-	"sync"
+    "sync"
 )
 
 type Handler struct {

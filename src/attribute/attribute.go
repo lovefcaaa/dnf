@@ -59,7 +59,7 @@ type Tracker struct {
 }
 
 func (tracker *Tracker) ToString() string {
-	return "{ Event_type: " + tracker.Event_type +
-		", Provider: " + tracker.Provider +
-		", Url:" + tracker.Url + " }"
+	return "{ event_type: " + tracker.Event_type +
+		", provider: " + tracker.Provider +
+		", url:" + tracker.Url + " }"
 }

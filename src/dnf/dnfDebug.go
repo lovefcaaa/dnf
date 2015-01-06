@@ -143,7 +143,21 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 		m["audio"] = doc.attr.Adurl
 		m["duration"] = doc.attr.Duration
 	}
-	m["trackers"] = doc.attr.Trackers
+	trackerSlice := make([]map[string]string, 0, 1)
+	for _, tr := range doc.attr.Trackers {
+		t := make(map[string]string)
+		if len(tr.Event_type) != 0 {
+			t["event_type"] = tr.Event_type
+		}
+		if len(tr.Provider) != 0 {
+			t["provider"] = tr.Provider
+		}
+		if len(tr.Url) != 0 {
+			t["url"] = tr.Url
+		}
+		trackerSlice = append(trackerSlice, t)
+	}
+	m["trackers"] = trackerSlice
 
 	return m
 }

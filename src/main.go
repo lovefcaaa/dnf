@@ -14,7 +14,7 @@ func main() {
 	go commitor.CommitLoop()
 
 	time.Sleep(3 * time.Second)
-	dnf.DisplayDocs()
+	//dnf.DisplayDocs()
 
 	go service.TcpServe()
 	service.HttpServe("/ad/search", "/ad/zone", 7777)

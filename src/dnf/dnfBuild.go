@@ -13,7 +13,7 @@ var once sync.Once
 func Init() {
 	once.Do(func() {
 		debugInit()
-	})
+    })
 }
 
 /* add new doc and insert infos into reverse lists */

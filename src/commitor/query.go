@@ -16,7 +16,7 @@ import (
 type rowsClosure func(rows *sql.Rows) interface{}
 
 func dbQuery(f rowsClosure, query string, args ...interface{}) (rc interface{}, err error) {
-	var rows *sql.Rows
+    var rows *sql.Rows
 	if rows, err = db.Query(query, args...); err == nil {
 		rc = f(rows)
 	}

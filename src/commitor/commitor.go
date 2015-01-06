@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"dnf"
 	_ "github.com/ziutek/mymysql/godrv"
 )
 
@@ -46,11 +47,13 @@ func Init() {
 
 func CommitLoop() {
 	adCommit()
+	dnf.DisplayDocs()
 	for {
 		time.Sleep(1 * time.Minute)
 		//now := time.Now()
 		//if now.Hour() == 3 && now.Minute() == 2 {
 		adCommit()
+		dnf.DisplayDocs()
 		//}
 	}
 }
