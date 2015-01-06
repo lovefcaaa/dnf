@@ -127,7 +127,7 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 	m["id"] = doc.docid
 
 	if doc.attr.CreativeType == "banner" {
-		m["creativetype"] = 0
+		m["restype"] = 0
 		m["image"] = doc.attr.Adurl
 		m["landing"] = doc.attr.Landing
 		w, _ := strconv.Atoi(doc.attr.Width)
@@ -136,7 +136,7 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 		m["audio"] = ""
 		m["duration"] = 0
 	} else {
-		m["creativetype"] = 1
+		m["restype"] = 1
 		m["image"] = ""
 		m["landing"] = ""
 		m["size"] = 0
