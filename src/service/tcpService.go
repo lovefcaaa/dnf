@@ -198,7 +198,9 @@ func tcpZonesHandler(conn net.Conn) {
 
 func handleZoneRequestData(conn net.Conn, data []byte, version int) {
 	m := make(map[string]interface{})
-	zones := commitor.GetZonesInfo(version)
+
+	h := commitor.GetZonesInfoHandler()
+	zones := h.GetZonesInfo(version)
 
 	poslist := make([]interface{}, 0)
 	for i := 0; i != len(zones); i++ {

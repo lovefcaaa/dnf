@@ -14,6 +14,8 @@ type Attr struct {
 	Landing      string /* 广告落地页 */
 	Width        string /* 广告图片宽 */
 	Height       string /* 广告图片高 */
+	Interval     int    /* 音频广告展示间隔 */
+	SubTitle     string /* 广告下方文字 */
 	Tr           TimeRange
 	Trackers     []Tracker
 }
@@ -31,6 +33,8 @@ func (attr *Attr) ToString() string {
 		"Landing: " + attr.Landing + "\n" +
 		"Width: " + attr.Width + "\n" +
 		"Height: " + attr.Height + "\n" +
+		"Interval: " + strconv.Itoa(attr.Interval) + "\n" +
+		"SubTitle: " + attr.SubTitle + "\n" +
 		"TimeRange: " + attr.Tr.ToString() + "\n" +
 		"Trackers: " + trackers + "\n"
 }

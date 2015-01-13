@@ -16,8 +16,9 @@ import (
 type rowsClosure func(rows *sql.Rows) interface{}
 
 func dbQuery(f rowsClosure, query string, args ...interface{}) (rc interface{}, err error) {
-    var rows *sql.Rows
+	var rows *sql.Rows
 	if rows, err = db.Query(query, args...); err == nil {
+		defer rows.Close()
 		rc = f(rows)
 	}
 	return
@@ -33,7 +34,30 @@ type ZoneInfo struct {
 	Comments string
 }
 
-func GetZonesInfo(version int) (rc []ZoneInfo) {
+type ZonesInfoHandler struct {
+	m map[int][]ZoneInfo
+}
+
+var zonesInfoHandler *ZonesInfoHandler
+
+func GetZonesInfoHandler() *ZonesInfoHandler {
+	return zonesInfoHandler
+}
+
+func (h *ZonesInfoHandler) GetZonesInfo(version int) []ZoneInfo {
+	return h.m[version]
+}
+
+func zoneInfoCommit() {
+	h := &ZonesInfoHandler{
+		m: make(map[int][]ZoneInfo),
+	}
+	defer func() { zonesInfoHandler = h }()
+	h.m[5] = getZonesInfo(5)
+	h.m[6] = getZonesInfo(6)
+}
+
+func getZonesInfo(version int) (rc []ZoneInfo) {
 	f := func(rows *sql.Rows) interface{} {
 		info := make([]ZoneInfo, 0)
 		for rows.Next() {
@@ -195,6 +219,17 @@ func byteInterToString(input interface{}) (rc string) {
 	return
 }
 
+func commentsParse(comment string) map[string]string {
+	m := make(map[string]string)
+	terms := strings.Split(comment, ";")
+	for _, term := range terms {
+		if kv := strings.Split(term, "="); len(kv) == 2 {
+			m[kv[0]] = kv[1]
+		}
+	}
+	return m
+}
+
 /*
    获取广告属性
    备注: 这里的属性只是从qtad_banners表中查询的，dnf不全，
@@ -208,12 +243,12 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 
 		var duration int
 		var creativeType string = "banner" // default
-		var adid, adurl, landing, tracker, width, height, conds, parameters string
+		var adid, adurl, landing, tracker, width, height, comments, conds, parameters string
 
-		var adidInter, adurlInter, landingInter, trackerInter, widthInter, heightInter, condsInter, parametersInter interface{} // deal with tracker = NULL in database
+		var adidInter, adurlInter, landingInter, trackerInter, widthInter, heightInter, commentsInter, condsInter, parametersInter interface{} // deal with tracker = NULL in database
 
 		err := rows.Scan(&adidInter, &adurlInter, &landingInter, &trackerInter,
-			&widthInter, &heightInter, &condsInter, &parametersInter)
+			&widthInter, &heightInter, &commentsInter, &condsInter, &parametersInter)
 
 		if err != nil {
 			fmt.Println("in get ad attr, scan rows err:", err)
@@ -226,6 +261,7 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 		tracker = byteInterToString(trackerInter)
 		width = byteInterToString(widthInter)
 		height = byteInterToString(heightInter)
+		comments = byteInterToString(commentsInter)
 		conds = byteInterToString(condsInter)
 		parameters = byteInterToString(parametersInter)
 
@@ -267,6 +303,18 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 			dnf += "width in {" + width + "} and height in {" + height + "}"
 		}
 
+		interval := 0 // default
+		subtitle := ""
+		kv := commentsParse(comments)
+		if s, ok := kv["subtitle"]; ok {
+			subtitle = s
+		}
+		if s, ok := kv["interval"]; ok {
+			if n, err := strconv.Atoi(s); err == nil {
+				interval = n
+			}
+		}
+
 		return attribute.Attr{
 			Adid:         adid,
 			DnfDesc:      dnf,
@@ -276,12 +324,14 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 			Landing:      landing,
 			Width:        width,
 			Height:       height,
+			Interval:     interval,
+			SubTitle:     subtitle,
 			Tr:           tr,
 			Trackers:     trackers,
 		}
 	}
 
-	query := "SELECT bannerid, imageurl, url, tracker, width, height, compiledlimitation, parameters from qtad_banners where bannerid = ?"
+	query := "SELECT bannerid, imageurl, url, tracker, width, height, comments, compiledlimitation, parameters from qtad_banners where bannerid = ?"
 
 	var rc interface{}
 	rc, err = dbQuery(f, query, adid)

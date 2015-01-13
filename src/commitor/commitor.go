@@ -47,13 +47,12 @@ func Init() {
 
 func CommitLoop() {
 	adCommit()
+	zoneInfoCommit()
 	dnf.DisplayDocs()
 	for {
 		time.Sleep(1 * time.Minute)
-		//now := time.Now()
-		//if now.Hour() == 3 && now.Minute() == 2 {
 		adCommit()
+		zoneInfoCommit()
 		dnf.DisplayDocs()
-		//}
 	}
 }

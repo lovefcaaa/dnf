@@ -125,6 +125,8 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 	m := make(map[string]interface{})
 	doc := &this.docs[docid]
 	m["id"] = doc.docid
+	m["interval"] = doc.attr.Interval
+	m["subtitle"] = doc.attr.SubTitle
 
 	if doc.attr.CreativeType == "banner" {
 		m["restype"] = 0

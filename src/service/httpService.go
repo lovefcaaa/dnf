@@ -23,7 +23,8 @@ func httpZonesHandler(w http.ResponseWriter, r *http.Request) {
 	if len(r.Form["version"]) != 0 {
 		version, _ = strconv.Atoi(r.Form["version"][0])
 	}
-	infos := commitor.GetZonesInfo(version)
+	h := commitor.GetZonesInfoHandler()
+	infos := h.GetZonesInfo(version)
 	rcMap := make(map[string][]commitor.ZoneInfo)
 	rcMap["zones"] = infos
 	if rc, err := json.Marshal(rcMap); err != nil {
