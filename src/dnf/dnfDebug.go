@@ -111,9 +111,9 @@ func (this *docList) display() {
 	this.RLock()
 	defer this.RUnlock()
 	//println("len docs == ", len(this.docs))
-	for i, doc := range this.docs {
-		//fmt.Println("Doc[", i, "]:", doc.ToString())
-	}
+	//for i, doc := range this.docs {
+	//	fmt.Println("Doc[", i, "]:", doc.ToString())
+	//}
 }
 
 func (this *docList) docId2Map(docid int) map[string]interface{} {
