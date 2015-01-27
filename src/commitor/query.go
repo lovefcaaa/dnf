@@ -115,7 +115,7 @@ func adCommit() {
 						"id: ", doc.GetDocId(),
 						"dnf: ", doc.GetDnf())
 				} else {
-					fmt.Println("ad doc [", id, "] ok")
+					// fmt.Println("ad doc [", id, "] ok")
 				}
 			}
 		}

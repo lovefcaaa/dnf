@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func tcpIndexHandler(conn net.Conn) {
@@ -105,22 +106,24 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 			}
 
 		} else {
-			fmt.Println("cond: ", kv[0], kv[1])
+			//fmt.Println("cond: ", kv[0], kv[1])
 			conds = append(conds, dnf.Cond{Key: kv[0], Val: kv[1]})
 		}
 	}
 
 	var repData string
 
-	fmt.Printf("search cond: %+v\n", conds)
+	//fmt.Printf("search cond: %+v\n", conds)
 
 	h := dnf.GetHandler()
 	if h == nil {
 		return errors.New("cannot get dnf handler")
 	}
 
+	now := time.Now()
+
 	if docs, err := h.Search(conds); err != nil {
-		fmt.Println("dnf Search err:", err)
+		fmt.Println(now.Format("2006-01-02 15:04:05"), "SearchErr:", err)
 		return err
 	} else {
 		adlist := make([]interface{}, 0)
@@ -133,7 +136,7 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 		m["data"] = adlist
 		rc, _ := json.Marshal(m)
 		repData = string(rc)
-		fmt.Println("rep data = ", repData)
+		fmt.Println(now.Format("2006-01-02 15:04:05"), "SearchOk:", repData)
 	}
 
 	magic := int32(0xBEEF)
@@ -226,7 +229,7 @@ func handleZoneRequestData(conn net.Conn, data []byte, version int) {
 	version32 := int32(version)
 	binary.Write(conn, binary.LittleEndian, &version32)
 	conn.Write([]byte(repData))
-	fmt.Println("return data: ", repData)
+	// fmt.Println("return data: ", repData)
 }
 
 func doTcpServe(port int, tcpHandler func(net.Conn)) {
