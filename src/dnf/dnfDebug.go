@@ -110,9 +110,9 @@ func (this *Doc) ToString() (s string) {
 func (this *docList) display() {
 	this.RLock()
 	defer this.RUnlock()
-	println("len docs == ", len(this.docs))
+	//println("len docs == ", len(this.docs))
 	for i, doc := range this.docs {
-		fmt.Println("Doc[", i, "]:", doc.ToString())
+		//fmt.Println("Doc[", i, "]:", doc.ToString())
 	}
 }
 

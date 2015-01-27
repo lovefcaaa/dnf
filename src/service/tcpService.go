@@ -240,7 +240,7 @@ func doTcpServe(port int, tcpHandler func(net.Conn)) {
 	defer ln.Close()
 	for {
 		if conn, err := ln.Accept(); err == nil {
-			fmt.Println("TcpServe Accept ok")
+			//fmt.Println("TcpServe Accept ok")
 			go tcpHandler(conn)
 		} else {
 			fmt.Println("TcpServe Accept conn error:", err)
