@@ -84,8 +84,8 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 				continue
 			}
 
-			switch vals[1] {
-			case "0": /* splash: /0/[width]/[height] */
+			switch {
+			case vals[1] == "0": /* splash: /0/[width]/[height] */
 				if len(vals) != 4 {
 					fmt.Println("query string err: ", kv[1])
 					continue
@@ -93,7 +93,9 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 				conds = append(conds, dnf.Cond{Key: "width", Val: vals[2]})
 				conds = append(conds, dnf.Cond{Key: "height", Val: vals[3]})
 
-			case "1": /* banner: /1/[cateid]/[pos]/[width]/[height] */
+			case vals[1] == "1" || vals[1] == "3":
+				/* banner: /1/[cateid]/[pos]/[width]/[height] */
+				/* recommend: /3/[cateid]/[pos]/[width]/[height] */
 				if len(vals) != 6 {
 					fmt.Println("query string err: ", kv[1])
 					continue

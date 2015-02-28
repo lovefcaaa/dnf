@@ -16,6 +16,7 @@ type Attr struct {
 	Height       string /* 广告图片高 */
 	Interval     int    /* 音频广告展示间隔 */
 	SubTitle     string /* 广告下方文字 */
+	Skin         string /* 推荐位的点进去播放页的皮肤图片 */
 	Tr           TimeRange
 	Trackers     []Tracker
 }
@@ -35,6 +36,7 @@ func (attr *Attr) ToString() string {
 		"Height: " + attr.Height + "\n" +
 		"Interval: " + strconv.Itoa(attr.Interval) + "\n" +
 		"SubTitle: " + attr.SubTitle + "\n" +
+		"Skin: " + attr.Skin + "\n" +
 		"TimeRange: " + attr.Tr.ToString() + "\n" +
 		"Trackers: " + trackers + "\n"
 }

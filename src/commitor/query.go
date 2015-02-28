@@ -303,7 +303,10 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 
 		interval := 0 // default
 		subtitle := ""
+		skinLoading := ""
 		kv := commentsParse(comments)
+
+		/* --------- 在这里新增属性 --------- */
 		if s, ok := kv["subtitle"]; ok {
 			subtitle = s
 		}
@@ -312,6 +315,10 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 				interval = n
 			}
 		}
+		if s, ok := kv["skinLoading"]; ok { /* 推荐位点进去的皮肤图片 */
+			skinLoading = s
+		}
+		/* ---------------------------------- */
 
 		return attribute.Attr{
 			Adid:         adid,
@@ -324,6 +331,7 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 			Height:       height,
 			Interval:     interval,
 			SubTitle:     subtitle,
+			Skin:         skinLoading,
 			Tr:           tr,
 			Trackers:     trackers,
 		}
@@ -349,6 +357,13 @@ func zones2Dnf(zones []string) (dnf string, err error) {
 	}
 	dnf = "zone in {"
 	for i := 0; i != len(zones); i++ {
+		/*
+		   我们所使用的revive-adserver开源AE系统，
+		   默认把所有广告都关联到0号广告位上
+		*/
+		if zones[i] == "0" {
+			continue
+		}
 		dnf += zones[i]
 		if i != len(zones)-1 {
 			dnf += ", "
