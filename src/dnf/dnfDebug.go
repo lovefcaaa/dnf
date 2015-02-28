@@ -138,6 +138,7 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 		m["size"] = w*10000 + h
 		m["audio"] = ""
 		m["duration"] = 0
+		m["skin"] = doc.attr.Skin
 	} else {
 		/* 如果是音频广告，adurl的格式为 audioUrl|imageUrl */
 		urls := strings.SplitN(doc.attr.Adurl, "|", 2)
@@ -151,6 +152,7 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 		m["size"] = 0
 		m["audio"] = urls[0]
 		m["duration"] = doc.attr.Duration
+		m["skin"] = ""
 	}
 	trackerSlice := make([]map[string]string, 0, 1)
 	for _, tr := range doc.attr.Trackers {
