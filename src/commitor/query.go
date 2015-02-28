@@ -265,10 +265,8 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 		conds = byteInterToString(condsInter)
 		parameters = byteInterToString(parametersInter)
 
-		/* adurl字段为空，说明是音频广告
-		   bull shit! what fucking logic ???
-		*/
-		if len(adurl) == 0 {
+		/* width和height都为-3，说明是音频广告 */
+		if width == "-3" && height == "-3" {
 			if m, ok := parseParameters(parameters); ok {
 				adurl = m["outgoing"]
 				landing = m["landing"]

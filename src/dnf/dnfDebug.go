@@ -3,6 +3,7 @@ package dnf
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 var debug bool = true
@@ -138,11 +139,17 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 		m["audio"] = ""
 		m["duration"] = 0
 	} else {
+		/* 如果是音频广告，adurl的格式为 audioUrl|imageUrl */
+		urls := strings.SplitN(doc.attr.Adurl, "|", 2)
 		m["restype"] = 1
-		m["image"] = ""
-		m["landing"] = ""
+		if len(urls) == 2 {
+			m["image"] = urls[1]
+		} else {
+			m["image"] = ""
+		}
+		m["landing"] = doc.attr.Landing
 		m["size"] = 0
-		m["audio"] = doc.attr.Adurl
+		m["audio"] = urls[0]
 		m["duration"] = doc.attr.Duration
 	}
 	trackerSlice := make([]map[string]string, 0, 1)
