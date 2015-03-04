@@ -304,6 +304,7 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 		interval := 0 // default
 		subtitle := ""
 		skinLoading := ""
+		splashLanding := ""
 		kv := commentsParse(comments)
 
 		/* --------- 在这里新增属性 --------- */
@@ -318,22 +319,26 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 		if s, ok := kv["skinLoading"]; ok { /* 推荐位点进去的皮肤图片 */
 			skinLoading = s
 		}
+		if s, ok := kv["splashLanding"]; ok {
+			splashLanding = s
+		}
 		/* ---------------------------------- */
 
 		return attribute.Attr{
-			Adid:         adid,
-			DnfDesc:      dnf,
-			Duration:     duration,
-			CreativeType: creativeType,
-			Adurl:        adurl,
-			Landing:      landing,
-			Width:        width,
-			Height:       height,
-			Interval:     interval,
-			SubTitle:     subtitle,
-			Skin:         skinLoading,
-			Tr:           tr,
-			Trackers:     trackers,
+			Adid:          adid,
+			DnfDesc:       dnf,
+			Duration:      duration,
+			CreativeType:  creativeType,
+			Adurl:         adurl,
+			Landing:       landing,
+			Width:         width,
+			Height:        height,
+			Interval:      interval,
+			SubTitle:      subtitle,
+			Skin:          skinLoading,
+			SplashLanding: splashLanding,
+			Tr:            tr,
+			Trackers:      trackers,
 		}
 	}
 

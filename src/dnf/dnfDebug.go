@@ -139,6 +139,7 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 		m["audio"] = ""
 		m["duration"] = 0
 		m["skin"] = doc.attr.Skin
+		m["splash_landing"] = doc.attr.SplashLanding
 	} else {
 		/* 如果是音频广告，adurl的格式为 audioUrl|imageUrl */
 		urls := strings.SplitN(doc.attr.Adurl, "|", 2)
