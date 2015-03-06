@@ -366,9 +366,6 @@ func zones2Dnf(zones []string) (dnf string, err error) {
 		   我们所使用的revive-adserver开源AE系统，
 		   默认把所有广告都关联到0号广告位上
 		*/
-		if zones[i] == "0" {
-			continue
-		}
 		dnf += zones[i]
 		if i != len(zones)-1 {
 			dnf += ", "
