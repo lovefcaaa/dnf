@@ -4,6 +4,7 @@ import (
 	"commitor"
 	"dnf"
 
+	"bytes"
 	"encoding/binary"
 	"encoding/json"
 	"errors"
@@ -66,6 +67,7 @@ func tcpIndexHandler(conn net.Conn) {
 }
 
 func handleIndexRequestData(conn net.Conn, data []byte) error {
+	isSplash := false /* 开屏需要特殊处理 */
 	conds := make([]dnf.Cond, 0)
 	params := strings.Split(string(data), "&")
 	if len(params) == 0 {
@@ -90,6 +92,7 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 					fmt.Println("query string err: ", kv[1])
 					continue
 				}
+				isSplash = true
 				conds = append(conds, dnf.Cond{Key: "width", Val: vals[2]})
 				conds = append(conds, dnf.Cond{Key: "height", Val: vals[3]})
 
@@ -113,8 +116,6 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 		}
 	}
 
-	var repData string
-
 	//fmt.Printf("search cond: %+v\n", conds)
 
 	h := dnf.GetHandler()
@@ -122,30 +123,38 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 		return errors.New("cannot get dnf handler")
 	}
 
+	m := make(map[string]interface{})
+	docs, err := h.Search(conds)
 	now := time.Now()
-
-	if docs, err := h.Search(conds); err != nil {
-		fmt.Println(now.Format("2006-01-02 15:04:05"), "SearchErr:", err)
-		return err
-	} else {
-		adlist := make([]interface{}, 0)
-		for _, doc := range docs {
-			if m := dnf.DocId2Map(doc); m != nil {
-				adlist = append(adlist, dnf.DocId2Map(doc))
-			}
+	if isSplash && len(docs) == 0 {
+		/* 返回空白开机图 */
+		m["data"] = []interface{}{
+			dnf.EmptySplash(),
 		}
-		m := make(map[string]interface{})
-		m["data"] = adlist
-		rc, _ := json.Marshal(m)
-		repData = string(rc)
-		fmt.Println(now.Format("2006-01-02 15:04:05"), "SearchOk:", repData)
+	} else {
+		if err != nil {
+			fmt.Println(now.Format("2006-01-02 15:04:05"), "SearchErr:", err)
+			return err
+		} else {
+			adlist := make([]interface{}, 0)
+			for _, doc := range docs {
+				if m := dnf.DocId2Map(doc); m != nil {
+					adlist = append(adlist, dnf.DocId2Map(doc))
+				}
+			}
+			m["data"] = adlist
+		}
 	}
 
+	rc, _ := json.Marshal(m)
+	buff := bytes.NewBuffer(rc)
+	fmt.Println(now.Format("2006-01-02 15:04:05"), "SearchOk:", string(rc))
+
 	magic := int32(0xBEEF)
-	size := int32(len(repData))
+	size := int32(buff.Len())
 	binary.Write(conn, binary.LittleEndian, &magic)
 	binary.Write(conn, binary.LittleEndian, &size)
-	_, err := conn.Write([]byte(repData))
+	_, err = buff.WriteTo(conn)
 	return err
 }
 

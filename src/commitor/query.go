@@ -301,7 +301,7 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 			dnf += "width in {" + width + "} and height in {" + height + "}"
 		}
 
-		interval := 0 // default
+		interval := 60 // default
 		subtitle := ""
 		skinLoading := ""
 		splashLanding := ""

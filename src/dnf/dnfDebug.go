@@ -174,6 +174,24 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 	return m
 }
 
+/* 返回一个空的开屏页数据结构，image填http://about:blank */
+func EmptySplash() map[string]interface{} {
+	return map[string]interface{}{
+		"audio":          "",
+		"duration":       0,
+		"id":             "0",
+		"image":          "http://about:blank",
+		"interval":       0,
+		"landing":        "",
+		"restype":        0,
+		"size":           0,
+		"skin":           "",
+		"splash_landing": "",
+		"subtitle":       "",
+		"trackers":       []map[string]interface{}{},
+	}
+}
+
 func DocId2Map(docid int) map[string]interface{} {
 	return GetHandler().docs_.docId2Map(docid)
 }
