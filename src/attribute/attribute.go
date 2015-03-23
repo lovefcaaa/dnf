@@ -6,20 +6,21 @@ import (
 )
 
 type Attr struct {
-	Adid          string /* 广告id */
-	DnfDesc       string /* DNF描述 */
-	Duration      int    /* 广告时长 */
-	CreativeType  string /* 广告素材类型 */
-	Adurl         string /* 广告图片地址 */
-	Landing       string /* 广告落地页 */
-	Width         string /* 广告图片宽 */
-	Height        string /* 广告图片高 */
-	Interval      int    /* 音频广告展示间隔 */
-	SubTitle      string /* 广告下方文字 */
-	Skin          string /* 推荐位的点进去播放页的皮肤图片 */
-	SplashLanding string /* 开屏点进去的推荐节目，格式/[channelId]/[programId]/[0|1] */
-	Tr            TimeRange
-	Trackers      []Tracker
+	Adid            string /* 广告id */
+	DnfDesc         string /* DNF描述 */
+	Duration        int    /* 广告时长 */
+	CreativeType    string /* 广告素材类型 */
+	Adurl           string /* 广告图片地址 */
+	Landing         string /* 广告落地页 */
+	Width           string /* 广告图片宽 */
+	Height          string /* 广告图片高 */
+	Interval        int    /* 音频广告展示间隔 */
+	SubTitle        string /* 广告下方文字 */
+	Skin            string /* 推荐位的点进去播放页的皮肤图片 */
+	SplashLanding   string /* 开屏点进去的推荐节目，格式/[catId]/[chanId]/[proId]/[0|1] */
+	InternalLanding string /* banner内链跳转地址，格式/[catId]/[chanId]/[proId]/[0|1] */
+	Tr              TimeRange
+	Trackers        []Tracker
 }
 
 func (attr *Attr) ToString() string {
@@ -39,6 +40,7 @@ func (attr *Attr) ToString() string {
 		"SubTitle: " + attr.SubTitle + "\n" +
 		"Skin: " + attr.Skin + "\n" +
 		"SplashLanding" + attr.SplashLanding + "\n" +
+		"InternalLanding" + attr.InternalLanding + "\n" +
 		"TimeRange: " + attr.Tr.ToString() + "\n" +
 		"Trackers: " + trackers + "\n"
 }

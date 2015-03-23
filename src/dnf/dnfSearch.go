@@ -3,6 +3,7 @@ package dnf
 import (
 	"errors"
 	"sort"
+	"sync"
 
 	"set"
 )
@@ -56,6 +57,8 @@ func (h *Handler) getDocs(conjs []int) (docs []int) {
 
 	set := set.NewIntSet()
 
+	var wg sync.WaitGroup
+
 	for _, conj := range conjs {
 		ASSERT(conj < len(h.conjRvs))
 		doclist := h.conjRvs[conj]
@@ -63,19 +66,18 @@ func (h *Handler) getDocs(conjs []int) (docs []int) {
 			continue
 		}
 		for _, doc := range doclist {
-			inTime := false
-
-			h.docs_.RLock()
-			if h.docs_.docs[doc].attr.Tr.CoverToday() {
-				inTime = true
-			}
-			h.docs_.RUnlock()
-
-			if inTime {
-				set.Add(doc)
-			}
+			wg.Add(1)
+			go func(h *Handler, docid int, w *sync.WaitGroup) {
+				h.docs_.RLock()
+				defer h.docs_.RUnlock()
+				if h.docs_.docs[docid].attr.Tr.CoverToday() {
+					set.Add(docid)
+				}
+				w.Done()
+			}(h, doc, &wg)
 		}
 	}
+	wg.Wait()
 	return set.ToSlice()
 }
 

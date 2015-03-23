@@ -96,9 +96,10 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 				conds = append(conds, dnf.Cond{Key: "width", Val: vals[2]})
 				conds = append(conds, dnf.Cond{Key: "height", Val: vals[3]})
 
-			case vals[1] == "1" || vals[1] == "3":
+			case vals[1] == "1" || vals[1] == "3" || vals[1] == "4":
 				/* banner: /1/[cateid]/[pos]/[width]/[height] */
 				/* recommend: /3/[cateid]/[pos]/[width]/[height] */
+				/* album: /4/[catid]/[chanid]/[width]/[height] */
 				if len(vals) != 6 {
 					fmt.Println("query string err: ", kv[1])
 					continue

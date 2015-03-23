@@ -2,9 +2,11 @@ package set
 
 import (
 	"sort"
+	"sync"
 )
 
 type CountSet struct {
+	sync.RWMutex
 	count    int
 	positive map[int]int
 	negetive map[int]int
@@ -21,6 +23,9 @@ func NewCountSet(count int) *CountSet {
 }
 
 func (set *CountSet) Add(id int, post bool) {
+	set.Lock()
+	defer set.Unlock()
+
 	if !post {
 		set.negetive[id] = 1
 	} else {
@@ -35,15 +40,21 @@ func (set *CountSet) Add(id int, post bool) {
 }
 
 func (set *CountSet) ToSlice() []int {
+	set.Lock()
 	for k, _ := range set.negetive {
 		if _, ok := set.result[k]; ok {
 			delete(set.result, k)
 		}
 	}
+	set.Unlock()
+
+	set.RLock()
 	rc := make([]int, 0, len(set.result))
 	for k, _ := range set.result {
 		rc = append(rc, k)
 	}
+	set.RUnlock()
+
 	if !sort.IntsAreSorted(rc) {
 		sort.IntSlice(rc).Sort()
 	}
@@ -51,6 +62,7 @@ func (set *CountSet) ToSlice() []int {
 }
 
 type IntSet struct {
+	sync.RWMutex
 	data map[int]bool
 }
 
@@ -59,20 +71,26 @@ func NewIntSet() *IntSet {
 }
 
 func (set *IntSet) Add(elem int) {
+	set.Lock()
+	defer set.Unlock()
 	set.data[elem] = true
 }
 
 func (set *IntSet) AddSlice(elems []int) {
+	set.Lock()
+	defer set.Unlock()
 	for _, elem := range elems {
 		set.Add(elem)
 	}
 }
 
 func (set *IntSet) ToSlice() []int {
+	set.RLock()
 	rc := make([]int, 0, len(set.data))
 	for k, _ := range set.data {
 		rc = append(rc, k)
 	}
+	set.RLock()
 	if !sort.IntsAreSorted(rc) {
 		sort.IntSlice(rc).Sort()
 	}

@@ -129,9 +129,13 @@ func ad2Doc(adid string) *dnf.Doc {
 		fmt.Println("getAdAttr error: ", err)
 		return nil
 	}
+	if attr.Tr.CoverToday() == false {
+		return nil
+	}
 	zones, err2 := getAssocAdZone(adid)
 	if err2 != nil {
 		fmt.Println("getAssocAdZone error: ", err2)
+		return nil
 	}
 	zoneDnf, err3 := zones2Dnf(zones)
 	if err3 != nil {
@@ -305,6 +309,7 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 		subtitle := ""
 		skinLoading := ""
 		splashLanding := ""
+		internalLanding := ""
 		kv := commentsParse(comments)
 
 		/* --------- 在这里新增属性 --------- */
@@ -322,23 +327,27 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 		if s, ok := kv["splashLanding"]; ok {
 			splashLanding = s
 		}
+		if s, ok := kv["internalLanding"]; ok {
+			internalLanding = s
+		}
 		/* ---------------------------------- */
 
 		return attribute.Attr{
-			Adid:          adid,
-			DnfDesc:       dnf,
-			Duration:      duration,
-			CreativeType:  creativeType,
-			Adurl:         adurl,
-			Landing:       landing,
-			Width:         width,
-			Height:        height,
-			Interval:      interval,
-			SubTitle:      subtitle,
-			Skin:          skinLoading,
-			SplashLanding: splashLanding,
-			Tr:            tr,
-			Trackers:      trackers,
+			Adid:            adid,
+			DnfDesc:         dnf,
+			Duration:        duration,
+			CreativeType:    creativeType,
+			Adurl:           adurl,
+			Landing:         landing,
+			Width:           width,
+			Height:          height,
+			Interval:        interval,
+			SubTitle:        subtitle,
+			Skin:            skinLoading,
+			SplashLanding:   splashLanding,
+			InternalLanding: internalLanding,
+			Tr:              tr,
+			Trackers:        trackers,
 		}
 	}
 

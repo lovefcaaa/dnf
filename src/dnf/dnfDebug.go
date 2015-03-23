@@ -128,6 +128,7 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 	m["id"] = doc.docid
 	m["interval"] = doc.attr.Interval
 	m["subtitle"] = doc.attr.SubTitle
+	m["internal_landing"] = doc.attr.InternalLanding
 
 	if doc.attr.CreativeType == "banner" {
 		m["restype"] = 0
@@ -177,18 +178,19 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 /* 返回一个空的开屏页数据结构，image填http://about:blank */
 func EmptySplash() map[string]interface{} {
 	return map[string]interface{}{
-		"audio":          "",
-		"duration":       0,
-		"id":             "0",
-		"image":          "http://about:blank",
-		"interval":       0,
-		"landing":        "",
-		"restype":        0,
-		"size":           0,
-		"skin":           "",
-		"splash_landing": "",
-		"subtitle":       "",
-		"trackers":       []map[string]interface{}{},
+		"audio":            "",
+		"duration":         0,
+		"id":               "0",
+		"image":            "http://about:blank",
+		"interval":         0,
+		"landing":          "",
+		"restype":          0,
+		"size":             0,
+		"skin":             "",
+		"splash_landing":   "",
+		"internal_landing": "",
+		"subtitle":         "",
+		"trackers":         []map[string]interface{}{},
 	}
 }
 
