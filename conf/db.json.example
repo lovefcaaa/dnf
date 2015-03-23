@@ -1,0 +1,7 @@
+{
+    "ip": "someip",
+    "port": "someport",
+    "dbname": "somedb",
+    "username": "someuser",
+    "passwd": "somepasswd"
+}

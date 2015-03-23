@@ -2,6 +2,8 @@ package commitor
 
 import (
 	"database/sql"
+	"encoding/json"
+	"os"
 	"sync"
 	"time"
 
@@ -13,24 +15,24 @@ var once sync.Once
 var db *sql.DB
 
 type dbConf struct {
-	ip       string
-	port     string
-	dbname   string
-	username string
-	passwd   string
+	Ip       string
+	Port     string
+	Dbname   string
+	Username string
+	Passwd   string
 }
 
 func loadDbConf() *dbConf {
-	// TODO: load conf from file
-
-	/* hehe: I won't commit those info to my github */
-	return &dbConf{
-		ip:       "someip",
-		port:     "someport",
-		dbname:   "somedb",
-		username: "someuser",
-		passwd:   "somepwd",
+	var conf dbConf
+	f, err := os.Open("conf/db.json")
+	if err != nil {
+		panic(err)
 	}
+	decoder := json.NewDecoder(f)
+	if err = decoder.Decode(&conf); err != nil {
+		panic(err)
+	}
+	return &conf
 }
 
 func Init() {
@@ -38,7 +40,7 @@ func Init() {
 		var err error
 		cf := loadDbConf()
 		db, err = sql.Open("mymysql",
-			"tcp:"+cf.ip+":"+cf.port+"*"+cf.dbname+"/"+cf.username+"/"+cf.passwd)
+			"tcp:"+cf.Ip+":"+cf.Port+"*"+cf.Dbname+"/"+cf.Username+"/"+cf.Passwd)
 		if err != nil {
 			panic(err)
 		}
