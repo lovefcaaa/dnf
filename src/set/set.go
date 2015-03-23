@@ -80,7 +80,7 @@ func (set *IntSet) AddSlice(elems []int) {
 	set.Lock()
 	defer set.Unlock()
 	for _, elem := range elems {
-		set.Add(elem)
+		set.data[elem] = true
 	}
 }
 
