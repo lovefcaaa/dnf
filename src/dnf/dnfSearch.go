@@ -2,6 +2,8 @@ package dnf
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"sort"
 	"sync"
 
@@ -70,8 +72,12 @@ func (h *Handler) getDocs(conjs []int) (docs []int) {
 			go func(h *Handler, docid int, w *sync.WaitGroup) {
 				h.docs_.RLock()
 				defer h.docs_.RUnlock()
-				if h.docs_.docs[docid].attr.Tr.CoverToday() {
+				ok, err := h.docs_.docs[docid].attr.Tr.CoverToday()
+				if ok {
 					set.Add(docid)
+				}
+				if err != nil {
+					fmt.Fprintln(os.Stderr, err)
 				}
 				w.Done()
 			}(h, doc, &wg)

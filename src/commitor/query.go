@@ -129,7 +129,7 @@ func ad2Doc(adid string) *dnf.Doc {
 		fmt.Println("getAdAttr error: ", err)
 		return nil
 	}
-	if attr.Tr.CoverToday() == false {
+	if ok, _ := attr.Tr.CoverToday(); !ok {
 		return nil
 	}
 	zones, err2 := getAssocAdZone(adid)
@@ -480,8 +480,7 @@ func parseGeoCond(limit string) (amt string, err error) {
 func parseDnfDesc(conds string) (dnf string, tr attribute.TimeRange, err error) {
 	m := make(map[string]bool)
 	limits := strings.Split(conds, "and")
-	tr.Startday = 19900101
-	tr.Endday = 29900101
+	tr.Init()
 	for i := 0; i < len(limits); i++ {
 		var amt string
 
@@ -503,11 +502,11 @@ func parseDnfDesc(conds string) (dnf string, tr attribute.TimeRange, err error) 
 		case strings.Contains(limits[i], "MAX_checkTime_Date"):
 			/* add more case here */
 			start, end := parseDateCond(limits[i])
-			if start > 0 && tr.Startday < start {
-				tr.Startday = start
+			if start != 0 {
+				tr.AddStart(start)
 			}
-			if end > 0 && tr.Endday > end {
-				tr.Endday = end
+			if end != 0 {
+				tr.AddEnd(end)
 			}
 		}
 	}
