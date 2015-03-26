@@ -461,7 +461,7 @@ func parseOsCond(limit string) (amt string, err error) {
 
 	var op string
 	switch tmp[n-1] {
-	case "~=":
+	case "=~":
 		op = " in "
 	case "!=":
 		op = " not in "
@@ -513,7 +513,7 @@ func parseGeoCond(limit string) (amt string, err error) {
 
 func parseDnfDesc(conds string) (dnf string, tr attribute.TimeRange, err error) {
 	m := make(map[string]bool)
-	limits := strings.Split(conds, "and")
+	limits := strings.Split(conds, " and ")
 	tr.Init()
 	for i := 0; i < len(limits); i++ {
 		var amt string
