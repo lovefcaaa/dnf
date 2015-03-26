@@ -48,40 +48,6 @@ func (attr *Attr) ToString() string {
 		"Trackers: " + trackers + "\n"
 }
 
-// type TimeRange struct {
-// 	Startday int
-// 	Endday   int
-// }
-//
-// func (tr *TimeRange) Init() {
-// 	tr.Startday = 19900101
-// 	tr.Endday = 29900101
-// }
-//
-// func (tr *TimeRange) SetStart(start int) {
-// 	if start > 0 && tr.Startday < start {
-// 		tr.Startday = start
-// 	}
-// }
-//
-// func (tr *TimeRange) SetEnd(end int) {
-// 	if end > 0 && tr.Endday > end {
-// 		tr.Endday = end
-// 	}
-// }
-//
-// func (tr *TimeRange) CoverToday() bool {
-// 	now := time.Now()
-// 	today := now.Year()*10000 +
-// 		int(now.Month())*100 +
-// 		now.Day()
-// 	return today >= tr.Startday && today <= tr.Endday
-// }
-//
-// func (tr *TimeRange) ToString() string {
-// 	return "{" + strconv.Itoa(tr.Startday) + ", " + strconv.Itoa(tr.Endday) + "}"
-// }
-
 const (
 	GT = iota
 	LT

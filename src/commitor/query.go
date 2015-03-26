@@ -443,6 +443,40 @@ func parseDateCond(limit string) (start int, end int) {
 	return
 }
 
+func parseOsCond(limit string) (amt string, err error) {
+	// now, cond = MAX_checkClient_Os('android,ios', '=~')
+	// or, cond = MAX_checkClient_Os('android,ios', '!~')
+
+	cond := strings.Split(limit, "MAX_checkClient_Os")[1]
+	// now, cond = ('android,ios', '=~')
+
+	cond = strings.Map(runeCondMapping, cond)
+	// now, cond = android,ios,=~
+
+	tmp := strings.Split(cond, ",")
+	n := len(tmp)
+	if n < 2 {
+		return "", errors.New("client format error: " + cond)
+	}
+
+	var op string
+	switch tmp[n-1] {
+	case "~=":
+		op = " in "
+	case "!=":
+		op = " not in "
+	default:
+		return "", errors.New("unrecognize op: " + tmp[n-1])
+	}
+
+	amt = "phonetype" + op + "{" + tmp[0]
+	for i := 1; i < n-1; i++ {
+		amt += "," + tmp[i]
+	}
+	amt += "}"
+	return amt, nil
+}
+
 func parseGeoCond(limit string) (amt string, err error) {
 	// now, cond = MAX_checkGeo_Region('cn|01,02,03,06,07,32', '=~')
 
@@ -508,6 +542,15 @@ func parseDnfDesc(conds string) (dnf string, tr attribute.TimeRange, err error) 
 			if end != 0 {
 				tr.AddEnd(end)
 			}
+
+		case strings.Contains(limits[i], "MAX_checkClient_Os"):
+			if amt, err = parseOsCond(limits[i]); err != nil {
+				return dnf, tr, err
+			}
+			if len(dnf) != 0 {
+				dnf += " and "
+			}
+			dnf += amt
 		}
 	}
 	return
