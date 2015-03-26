@@ -463,7 +463,7 @@ func parseOsCond(limit string) (amt string, err error) {
 	switch tmp[n-1] {
 	case "=~":
 		op = " in "
-	case "!=":
+	case "!~":
 		op = " not in "
 	default:
 		return "", errors.New("unrecognize op: " + tmp[n-1])
