@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -337,8 +338,8 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 			DnfDesc:         dnf,
 			Duration:        duration,
 			CreativeType:    creativeType,
-			Adurl:           adurl,
-			Landing:         landing,
+			Adurl:           url.QueryEscape(adurl),
+			Landing:         url.QueryEscape(landing),
 			Width:           width,
 			Height:          height,
 			Interval:        interval,
@@ -389,6 +390,9 @@ func trackerUnmarshal(tracker string) ([]attribute.Tracker, error) {
 	dec := json.NewDecoder(strings.NewReader(tracker))
 	if err := dec.Decode(&trackers); err != nil {
 		return nil, err
+	}
+	for i := 0; i != len(trackers); i++ {
+		trackers[i].Url = url.QueryEscape(trackers[i].Url)
 	}
 	return trackers, nil
 }
