@@ -333,13 +333,27 @@ func getAdAttr(adid string) (attr attribute.Attr, err error) {
 		}
 		/* ---------------------------------- */
 
+		/* url parse */
+		if tmpUrl, err := url.Parse(adurl); err != nil {
+			fmt.Println("parse adurl: ", adurl, " error: ", err)
+			return nil
+		} else {
+			adurl = tmpUrl.String()
+		}
+		if tmpUrl, err := url.Parse(landing); err != nil {
+			fmt.Println("parse landing: ", landing, " error: ", err)
+			return nil
+		} else {
+			landing = tmpUrl.String()
+		}
+
 		return attribute.Attr{
 			Adid:            adid,
 			DnfDesc:         dnf,
 			Duration:        duration,
 			CreativeType:    creativeType,
-			Adurl:           url.QueryEscape(adurl),
-			Landing:         url.QueryEscape(landing),
+			Adurl:           adurl,
+			Landing:         landing,
 			Width:           width,
 			Height:          height,
 			Interval:        interval,
@@ -386,13 +400,19 @@ func zones2Dnf(zones []string) (dnf string, err error) {
 }
 
 func trackerUnmarshal(tracker string) ([]attribute.Tracker, error) {
+	var err error
 	var trackers []attribute.Tracker
+
 	dec := json.NewDecoder(strings.NewReader(tracker))
-	if err := dec.Decode(&trackers); err != nil {
+	if err = dec.Decode(&trackers); err != nil {
 		return nil, err
 	}
 	for i := 0; i != len(trackers); i++ {
-		trackers[i].Url = url.QueryEscape(trackers[i].Url)
+		if tmpUrl, err := url.Parse(trackers[i].Url); err != nil {
+			return nil, err
+		} else {
+			trackers[i].Url = tmpUrl.String()
+		}
 	}
 	return trackers, nil
 }
