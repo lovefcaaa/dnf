@@ -2,6 +2,7 @@ package dnf
 
 import (
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -117,6 +118,16 @@ func (this *docList) display() {
 	//}
 }
 
+func urlParse(addr string) string {
+	s := "http://about:blank"
+	if tmpUrl, err := url.Parse(addr); err != nil {
+		fmt.Println("parse url error: ", addr, " error: ", err)
+	} else {
+		s = tmpUrl.String()
+	}
+	return s
+}
+
 func (this *docList) docId2Map(docid int) map[string]interface{} {
 	if len(this.docs) <= docid {
 		return nil
@@ -132,25 +143,25 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 
 	if doc.attr.CreativeType == "banner" {
 		m["restype"] = 0
-		m["image"] = doc.attr.Adurl
-		m["landing"] = doc.attr.Landing
+		m["image"] = urlParse(doc.attr.Adurl)
+		m["landing"] = urlParse(doc.attr.Landing)
 		w, _ := strconv.Atoi(doc.attr.Width)
 		h, _ := strconv.Atoi(doc.attr.Height)
 		m["size"] = w*10000 + h
 		m["audio"] = ""
 		m["duration"] = 0
-		m["skin"] = doc.attr.Skin
+		m["skin"] = urlParse(doc.attr.Skin)
 		m["splash_landing"] = doc.attr.SplashLanding
 	} else {
 		/* 如果是音频广告，adurl的格式为 audioUrl|imageUrl */
 		urls := strings.SplitN(doc.attr.Adurl, "|", 2)
 		m["restype"] = 1
 		if len(urls) == 2 {
-			m["image"] = urls[1]
+			m["image"] = urlParse(urls[1])
 		} else {
 			m["image"] = ""
 		}
-		m["landing"] = doc.attr.Landing
+		m["landing"] = urlParse(doc.attr.Landing)
 		m["size"] = 0
 		m["audio"] = urls[0]
 		m["duration"] = doc.attr.Duration
@@ -166,7 +177,7 @@ func (this *docList) docId2Map(docid int) map[string]interface{} {
 			t["provider"] = tr.Provider
 		}
 		if len(tr.Url) != 0 {
-			t["url"] = tr.Url
+			t["url"] = urlParse(tr.Url)
 		}
 		trackerSlice = append(trackerSlice, t)
 	}

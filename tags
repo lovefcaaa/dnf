@@ -4,7 +4,7 @@
 !_TAG_PROGRAM_NAME	gotags
 !_TAG_PROGRAM_URL	https://github.com/jstemmer/gotags
 !_TAG_PROGRAM_VERSION	1.3.0
-ASSERT	src/dnf/dnfDebug.go	12;"	v	access:public	line:12	type:func(expression bool)
+ASSERT	src/dnf/dnfDebug.go	13;"	v	access:public	line:13	type:func(expression bool)
 Add	src/dnf/dnfBuild.go	304;"	m	access:public	ctype:docList	line:304	signature:(doc *Doc, h *Handler)	type:int
 Add	src/dnf/dnfBuild.go	317;"	m	access:public	ctype:conjList	line:317	signature:(conj *Conj, h *Handler)	type:int
 Add	src/dnf/dnfBuild.go	340;"	m	access:public	ctype:amtList	line:340	signature:(amt *Amt, h *Handler)	type:int
@@ -19,7 +19,7 @@ Adid	src/attribute/attribute.go	12;"	w	access:public	ctype:Attr	line:12	type:str
 Adurl	src/attribute/attribute.go	16;"	w	access:public	ctype:Attr	line:16	type:string
 Amt	src/dnf/dnfBuild.go	235;"	t	access:public	line:235	type:struct
 Attr	src/attribute/attribute.go	11;"	t	access:public	line:11	type:struct
-Comments	src/commitor/query.go	35;"	w	access:public	ctype:ZoneInfo	line:35	type:string
+Comments	src/commitor/query.go	34;"	w	access:public	ctype:ZoneInfo	line:34	type:string
 CommitLoop	src/commitor/commitor.go	50;"	f	access:public	line:50	signature:()
 Cond	src/dnf/dnfSearch.go	13;"	t	access:public	line:13	type:struct
 Conj	src/dnf/dnfBuild.go	199;"	t	access:public	line:199	type:struct
@@ -27,21 +27,21 @@ CountSet	src/set/set.go	8;"	t	access:public	line:8	type:struct
 CoverTime	src/attribute/attribute.go	145;"	m	access:public	ctype:TimeRange	line:145	signature:(day int)	type:bool, error
 CoverToday	src/attribute/attribute.go	124;"	m	access:public	ctype:TimeRange	line:124	signature:()	type:bool, error
 CreativeType	src/attribute/attribute.go	15;"	w	access:public	ctype:Attr	line:15	type:string
-DEBUG	src/dnf/dnfDebug.go	11;"	v	access:public	line:11	type:func(msg )
+DEBUG	src/dnf/dnfDebug.go	12;"	v	access:public	line:12	type:func(msg )
 Dbname	src/commitor/commitor.go	20;"	w	access:public	ctype:dbConf	line:20	type:string
-DisplayAmts	src/dnf/dnfDebug.go	241;"	f	access:public	line:241	signature:()
-DisplayConjRevs	src/dnf/dnfDebug.go	249;"	f	access:public	line:249	signature:()
-DisplayConjRevs2	src/dnf/dnfDebug.go	263;"	f	access:public	line:263	signature:()
-DisplayConjs	src/dnf/dnfDebug.go	237;"	f	access:public	line:237	signature:()
-DisplayDocs	src/dnf/dnfDebug.go	233;"	f	access:public	line:233	signature:()
-DisplayTerms	src/dnf/dnfDebug.go	245;"	f	access:public	line:245	signature:()
+DisplayAmts	src/dnf/dnfDebug.go	252;"	f	access:public	line:252	signature:()
+DisplayConjRevs	src/dnf/dnfDebug.go	260;"	f	access:public	line:260	signature:()
+DisplayConjRevs2	src/dnf/dnfDebug.go	274;"	f	access:public	line:274	signature:()
+DisplayConjs	src/dnf/dnfDebug.go	248;"	f	access:public	line:248	signature:()
+DisplayDocs	src/dnf/dnfDebug.go	244;"	f	access:public	line:244	signature:()
+DisplayTerms	src/dnf/dnfDebug.go	256;"	f	access:public	line:256	signature:()
 DnfCheck	src/dnf/dnfState.go	52;"	f	access:public	line:52	signature:(dnf string)	type:error
 DnfDesc	src/attribute/attribute.go	13;"	w	access:public	ctype:Attr	line:13	type:string
 DnfFmtError	src/dnf/dnfState.go	7;"	v	access:public	line:7	type:error
 Doc	src/dnf/dnfBuild.go	154;"	t	access:public	line:154	type:struct
-DocId2Map	src/dnf/dnfDebug.go	197;"	f	access:public	line:197	signature:(docid int)	type:map[string]interface{}
+DocId2Map	src/dnf/dnfDebug.go	208;"	f	access:public	line:208	signature:(docid int)	type:map[string]interface{}
 Duration	src/attribute/attribute.go	14;"	w	access:public	ctype:Attr	line:14	type:int
-EmptySplash	src/dnf/dnfDebug.go	179;"	f	access:public	line:179	signature:()	type:map[string]interface{}
+EmptySplash	src/dnf/dnfDebug.go	190;"	f	access:public	line:190	signature:()	type:map[string]interface{}
 Equal	src/dnf/dnfBuild.go	206;"	m	access:public	ctype:Conj	line:206	signature:(c *Conj)	type:bool
 Equal	src/dnf/dnfBuild.go	242;"	m	access:public	ctype:Amt	line:242	signature:(amt *Amt)	type:bool
 Equal	src/dnf/dnfBuild.go	275;"	m	access:public	ctype:Term	line:275	signature:(term *Term)	type:bool
@@ -54,11 +54,11 @@ GetDnf	src/dnf/dnfBuild.go	185;"	m	access:public	ctype:Doc	line:185	signature:()
 GetDocId	src/dnf/dnfBuild.go	181;"	m	access:public	ctype:Doc	line:181	signature:()	type:string
 GetHandler	src/dnf/dnfHandle.go	44;"	f	access:public	ctype:Handler	line:44	signature:()	type:*Handler
 GetName	src/dnf/dnfBuild.go	177;"	m	access:public	ctype:Doc	line:177	signature:()	type:string
-GetZonesInfo	src/commitor/query.go	48;"	m	access:public	ctype:ZonesInfoHandler	line:48	signature:(version int)	type:[]ZoneInfo
-GetZonesInfoHandler	src/commitor/query.go	44;"	f	access:public	ctype:ZonesInfoHandler	line:44	signature:()	type:*ZonesInfoHandler
+GetZonesInfo	src/commitor/query.go	47;"	m	access:public	ctype:ZonesInfoHandler	line:47	signature:(version int)	type:[]ZoneInfo
+GetZonesInfoHandler	src/commitor/query.go	43;"	f	access:public	ctype:ZonesInfoHandler	line:43	signature:()	type:*ZonesInfoHandler
 Handler	src/dnf/dnfHandle.go	7;"	t	access:public	line:7	type:struct
 Height	src/attribute/attribute.go	19;"	w	access:public	ctype:Attr	line:19	type:string
-Height	src/commitor/query.go	33;"	w	access:public	ctype:ZoneInfo	line:33	type:string
+Height	src/commitor/query.go	32;"	w	access:public	ctype:ZoneInfo	line:32	type:string
 HttpServe	src/service/httpService.go	75;"	f	access:public	line:75	signature:(searchUrl string, zoneUrl string, port int)
 Init	src/attribute/attribute.go	67;"	m	access:public	ctype:TimeRange	line:67	signature:()
 Init	src/commitor/commitor.go	38;"	f	access:public	line:38	signature:()
@@ -108,25 +108,25 @@ ToSlice	src/set/set.go	87;"	m	access:public	ctype:IntSet	line:87	signature:()	ty
 ToString	src/attribute/attribute.go	174;"	m	access:public	ctype:Tracker	line:174	signature:()	type:string
 ToString	src/attribute/attribute.go	29;"	m	access:public	ctype:Attr	line:29	signature:()	type:string
 ToString	src/attribute/attribute.go	73;"	m	access:public	ctype:TimeRange	line:73	signature:()	type:string
-ToString	src/dnf/dnfDebug.go	40;"	m	access:public	ctype:Term	line:40	signature:()	type:string
-ToString	src/dnf/dnfDebug.go	48;"	m	access:public	ctype:Amt	line:48	signature:()	type:string
-ToString	src/dnf/dnfDebug.go	75;"	m	access:public	ctype:Conj	line:75	signature:()	type:string
-ToString	src/dnf/dnfDebug.go	93;"	m	access:public	ctype:Doc	line:93	signature:()	type:string
+ToString	src/dnf/dnfDebug.go	41;"	m	access:public	ctype:Term	line:41	signature:()	type:string
+ToString	src/dnf/dnfDebug.go	49;"	m	access:public	ctype:Amt	line:49	signature:()	type:string
+ToString	src/dnf/dnfDebug.go	76;"	m	access:public	ctype:Conj	line:76	signature:()	type:string
+ToString	src/dnf/dnfDebug.go	94;"	m	access:public	ctype:Doc	line:94	signature:()	type:string
 Tr	src/attribute/attribute.go	25;"	w	access:public	ctype:Attr	line:25	type:TimeRange
 Tracker	src/attribute/attribute.go	168;"	t	access:public	line:168	type:struct
 Trackers	src/attribute/attribute.go	26;"	w	access:public	ctype:Attr	line:26	type:[]Tracker
 Url	src/attribute/attribute.go	171;"	w	access:public	ctype:Tracker	line:171	type:string
 Username	src/commitor/commitor.go	21;"	w	access:public	ctype:dbConf	line:21	type:string
 Val	src/dnf/dnfSearch.go	15;"	w	access:public	ctype:Cond	line:15	type:string
-Version	src/commitor/query.go	34;"	w	access:public	ctype:ZoneInfo	line:34	type:string
+Version	src/commitor/query.go	33;"	w	access:public	ctype:ZoneInfo	line:33	type:string
 Width	src/attribute/attribute.go	18;"	w	access:public	ctype:Attr	line:18	type:string
-Width	src/commitor/query.go	32;"	w	access:public	ctype:ZoneInfo	line:32	type:string
-ZoneInfo	src/commitor/query.go	30;"	t	access:public	line:30	type:struct
-Zoneid	src/commitor/query.go	31;"	w	access:public	ctype:ZoneInfo	line:31	type:string
-ZonesInfoHandler	src/commitor/query.go	38;"	t	access:public	line:38	type:struct
+Width	src/commitor/query.go	31;"	w	access:public	ctype:ZoneInfo	line:31	type:string
+ZoneInfo	src/commitor/query.go	29;"	t	access:public	line:29	type:struct
+Zoneid	src/commitor/query.go	30;"	w	access:public	ctype:ZoneInfo	line:30	type:string
+ZonesInfoHandler	src/commitor/query.go	37;"	t	access:public	line:37	type:struct
 active	src/dnf/dnfBuild.go	161;"	w	access:private	ctype:Doc	line:161	type:bool
-ad2Doc	src/commitor/query.go	127;"	f	access:private	line:127	signature:(adid string)	type:*dnf.Doc
-adCommit	src/commitor/query.go	88;"	f	access:private	line:88	signature:()
+ad2Doc	src/commitor/query.go	126;"	f	access:private	line:126	signature:(adid string)	type:*dnf.Doc
+adCommit	src/commitor/query.go	87;"	f	access:private	line:87	signature:()
 addDocs	src/dnfTestMain.go	32;"	f	access:private	line:32	signature:()
 addDocsRace	src/dnfTestMain.go	41;"	f	access:private	line:41	signature:()
 amtBuild	src/dnf/dnfBuild.go	138;"	m	access:private	ctype:Handler	line:138	signature:(key string, vals []string, belong bool)	type:int
@@ -138,17 +138,17 @@ amts_	src/dnf/dnfHandle.go	10;"	w	access:private	ctype:Handler	line:10	type:*amt
 attr	src/dnf/dnfBuild.go	164;"	w	access:private	ctype:Doc	line:164	type:*attribute.Attr
 attribute	src/attribute/attribute.go	1;"	p	line:1
 attribute	src/attribute/attribute_test.go	1;"	p	line:1
-attribute	src/commitor/query.go	12;"	i	line:12
+attribute	src/commitor/query.go	11;"	i	line:11
 attribute	src/dnf/dnfBuild.go	4;"	i	line:4
 belong	src/dnf/dnfBuild.go	237;"	w	access:private	ctype:Amt	line:237	type:bool
 belong	src/dnf/dnfBuild.go	425;"	w	access:private	ctype:cPair	line:425	type:bool
-byteInterToString	src/commitor/query.go	220;"	f	access:private	line:220	signature:(input interface{})	type:string
+byteInterToString	src/commitor/query.go	219;"	f	access:private	line:219	signature:(input interface{})	type:string
 bytes	src/service/tcpService.go	7;"	i	line:7
 cList	src/dnf/dnfBuild.go	445;"	w	access:private	ctype:termRvs	line:445	type:[]cPair
 cPair	src/dnf/dnfBuild.go	423;"	t	access:private	line:423	type:struct
 cPairSlice	src/dnf/dnfBuild.go	429;"	t	access:private	line:429	type:[]cPair
 check	src/dnfTestMain.go	21;"	f	access:private	line:21	signature:()
-commentsParse	src/commitor/query.go	227;"	f	access:private	line:227	signature:(comment string)	type:map[string]string
+commentsParse	src/commitor/query.go	226;"	f	access:private	line:226	signature:(comment string)	type:map[string]string
 commitor	src/commitor/commitor.go	1;"	p	line:1
 commitor	src/commitor/query.go	1;"	p	line:1
 commitor	src/commitor/testQuery.go	1;"	p	line:1
@@ -177,18 +177,18 @@ database/sql	src/commitor/commitor.go	4;"	i	line:4
 database/sql	src/commitor/query.go	4;"	i	line:4
 db	src/commitor/commitor.go	15;"	v	access:private	line:15	type:*sql.DB
 dbConf	src/commitor/commitor.go	17;"	t	access:private	line:17	type:struct
-dbQuery	src/commitor/query.go	19;"	f	access:private	line:19	signature:(f rowsClosure, query string, args )	type:interface{}, error
-debug	src/dnf/dnfDebug.go	9;"	v	access:private	line:9	type:bool
-debugInit	src/dnf/dnfDebug.go	30;"	f	access:private	line:30	signature:()
-display	src/dnf/dnfDebug.go	111;"	m	access:private	ctype:docList	line:111	signature:()
-display	src/dnf/dnfDebug.go	201;"	m	access:private	ctype:conjList	line:201	signature:()
-display	src/dnf/dnfDebug.go	209;"	m	access:private	ctype:amtList	line:209	signature:()
-display	src/dnf/dnfDebug.go	217;"	m	access:private	ctype:termList	line:217	signature:()
-display	src/dnf/dnfDebug.go	226;"	m	access:private	line:226	ntype:displayer	signature:()
-display	src/dnf/dnfDebug.go	229;"	f	access:private	line:229	signature:(obj displayer)
-displayer	src/dnf/dnfDebug.go	225;"	n	access:private	line:225	type:interface
+dbQuery	src/commitor/query.go	18;"	f	access:private	line:18	signature:(f rowsClosure, query string, args )	type:interface{}, error
+debug	src/dnf/dnfDebug.go	10;"	v	access:private	line:10	type:bool
+debugInit	src/dnf/dnfDebug.go	31;"	f	access:private	line:31	signature:()
+display	src/dnf/dnfDebug.go	112;"	m	access:private	ctype:docList	line:112	signature:()
+display	src/dnf/dnfDebug.go	212;"	m	access:private	ctype:conjList	line:212	signature:()
+display	src/dnf/dnfDebug.go	220;"	m	access:private	ctype:amtList	line:220	signature:()
+display	src/dnf/dnfDebug.go	228;"	m	access:private	ctype:termList	line:228	signature:()
+display	src/dnf/dnfDebug.go	237;"	m	access:private	line:237	ntype:displayer	signature:()
+display	src/dnf/dnfDebug.go	240;"	f	access:private	line:240	signature:(obj displayer)
+displayer	src/dnf/dnfDebug.go	236;"	n	access:private	line:236	type:interface
 dnf	src/commitor/commitor.go	10;"	i	line:10
-dnf	src/commitor/query.go	13;"	i	line:13
+dnf	src/commitor/query.go	12;"	i	line:12
 dnf	src/dnf/dnfBuild.go	158;"	w	access:private	ctype:Doc	line:158	type:string
 dnf	src/dnf/dnfBuild.go	1;"	p	line:1
 dnf	src/dnf/dnfDebug.go	1;"	p	line:1
@@ -211,12 +211,12 @@ dnfState7	src/dnf/dnfState.go	161;"	f	access:private	line:161	signature:(dnf *st
 dnfState8	src/dnf/dnfState.go	179;"	f	access:private	line:179	signature:(dnf *string, i int, m map[string]bool)	type:error
 dnfState9	src/dnf/dnfState.go	194;"	f	access:private	line:194	signature:(dnf *string, i int, m map[string]bool)	type:error
 dnf_test_main	src/dnfTestMain.go	57;"	f	access:private	line:57	signature:()
-doASSERT	src/dnf/dnfDebug.go	22;"	f	access:private	line:22	signature:(expression bool)
+doASSERT	src/dnf/dnfDebug.go	23;"	f	access:private	line:23	signature:(expression bool)
 doAddDoc	src/dnf/dnfBuild.go	43;"	m	access:private	ctype:Handler	line:43	signature:(name string, docid string, dnf string, attr *attribute.Attr)
-doDEBUG	src/dnf/dnfDebug.go	14;"	f	access:private	line:14	signature:(msg )
+doDEBUG	src/dnf/dnfDebug.go	15;"	f	access:private	line:15	signature:(msg )
 doSearch	src/dnf/dnfSearch.go	48;"	m	access:private	ctype:Handler	line:48	signature:(terms []int)	type:[]int
 doTcpServe	src/service/tcpService.go	247;"	f	access:private	line:247	signature:(port int, tcpHandler func(net.Conn))
-docId2Map	src/dnf/dnfDebug.go	120;"	m	access:private	ctype:docList	line:120	signature:(docid int)	type:map[string]interface{}
+docId2Map	src/dnf/dnfDebug.go	131;"	m	access:private	ctype:docList	line:131	signature:(docid int)	type:map[string]interface{}
 docList	src/dnf/dnfBuild.go	284;"	t	access:private	line:284	type:struct
 docid	src/dnf/dnfBuild.go	156;"	w	access:private	ctype:Doc	line:156	type:string
 docs	src/dnf/dnfBuild.go	286;"	w	access:private	ctype:docList	line:286	type:[]Doc
@@ -242,14 +242,14 @@ fmt	src/dnf/dnfSearch.go	5;"	i	line:5
 fmt	src/dnfTestMain.go	6;"	i	line:6
 fmt	src/service/httpService.go	8;"	i	line:8
 fmt	src/service/tcpService.go	11;"	i	line:11
-getAdAttr	src/commitor/query.go	243;"	f	access:private	line:243	signature:(adid string)	type:attribute.Attr, error
-getAssocAdZone	src/commitor/query.go	160;"	f	access:private	line:160	signature:(adid string)	type:[]string, error
+getAdAttr	src/commitor/query.go	242;"	f	access:private	line:242	signature:(adid string)	type:attribute.Attr, error
+getAssocAdZone	src/commitor/query.go	159;"	f	access:private	line:159	signature:(adid string)	type:[]string, error
 getConjs	src/dnf/dnfSearch.go	90;"	m	access:private	ctype:Handler	line:90	signature:(terms []int)	type:[]int
 getDocs	src/dnf/dnfSearch.go	56;"	m	access:private	ctype:Handler	line:56	signature:(conjs []int)	type:[]int
 getString	src/dnf/dnfState.go	38;"	f	access:private	line:38	signature:(s *string, i int)	type:string, int
-getZonesInfo	src/commitor/query.go	61;"	f	access:private	line:61	signature:(version int)	type:[]ZoneInfo
+getZonesInfo	src/commitor/query.go	60;"	f	access:private	line:60	signature:(version int)	type:[]ZoneInfo
 github.com/ziutek/mymysql/godrv	src/commitor/commitor.go	11;"	i	line:11
-github.com/ziutek/mymysql/godrv	src/commitor/query.go	14;"	i	line:14
+github.com/ziutek/mymysql/godrv	src/commitor/query.go	13;"	i	line:13
 gts	src/attribute/attribute.go	63;"	w	access:private	ctype:TimeRange	line:63	type:int
 handleIndexRequestData	src/service/tcpService.go	69;"	f	access:private	line:69	signature:(conn net.Conn, data []byte)	type:error
 handleZoneRequestData	src/service/tcpService.go	214;"	f	access:private	line:214	signature:(conn net.Conn, data []byte, version int)
@@ -267,7 +267,7 @@ io	src/service/tcpService.go	12;"	i	line:12
 key	src/dnf/dnfBuild.go	271;"	w	access:private	ctype:Term	line:271	type:string
 loadDbConf	src/commitor/commitor.go	25;"	f	access:private	ctype:dbConf	line:25	signature:()	type:*dbConf
 lts	src/attribute/attribute.go	64;"	w	access:private	ctype:TimeRange	line:64	type:int
-m	src/commitor/query.go	39;"	w	access:private	ctype:ZonesInfoHandler	line:39	type:map[int][]ZoneInfo
+m	src/commitor/query.go	38;"	w	access:private	ctype:ZonesInfoHandler	line:38	type:map[int][]ZoneInfo
 main	src/dnfTestMain.go	1;"	p	line:1
 main	src/main.go	12;"	f	access:private	line:12	signature:()
 main	src/main.go	1;"	p	line:1
@@ -275,25 +275,25 @@ name	src/dnf/dnfBuild.go	157;"	w	access:private	ctype:Doc	line:157	type:string
 negetive	src/set/set.go	12;"	w	access:private	ctype:CountSet	line:12	type:map[int]int
 net	src/service/tcpService.go	13;"	i	line:13
 net/http	src/service/httpService.go	9;"	i	line:9
-net/url	src/commitor/query.go	8;"	i	line:8
+net/url	src/dnf/dnfDebug.go	5;"	i	line:5
 net/url	src/service/tcpService.go	14;"	i	line:14
-noASSERT	src/dnf/dnfDebug.go	28;"	f	access:private	line:28	signature:(expression bool)
-noDEBUG	src/dnf/dnfDebug.go	20;"	f	access:private	line:20	signature:(msg )
+noASSERT	src/dnf/dnfDebug.go	29;"	f	access:private	line:29	signature:(expression bool)
+noDEBUG	src/dnf/dnfDebug.go	21;"	f	access:private	line:21	signature:(msg )
 once	src/commitor/commitor.go	14;"	v	access:private	line:14	type:sync.Once
 once	src/dnf/dnfBuild.go	11;"	v	access:private	line:11	type:sync.Once
 os	src/commitor/commitor.go	6;"	i	line:6
 os	src/dnf/dnfSearch.go	6;"	i	line:6
-parseDateCond	src/commitor/query.go	428;"	f	access:private	line:428	signature:(limit string)	type:int, int
-parseDnfDesc	src/commitor/query.go	538;"	f	access:private	line:538	signature:(conds string)	type:string, attribute.TimeRange, error
-parseGeoCond	src/commitor/query.go	504;"	f	access:private	line:504	signature:(limit string)	type:string, error
-parseOsCond	src/commitor/query.go	470;"	f	access:private	line:470	signature:(limit string)	type:string, error
-parseParameters	src/commitor/query.go	195;"	f	access:private	line:195	signature:(param string)	type:map[string]string, bool
-parseValue	src/commitor/query.go	180;"	f	access:private	line:180	signature:(param string)	type:string
+parseDateCond	src/commitor/query.go	406;"	f	access:private	line:406	signature:(limit string)	type:int, int
+parseDnfDesc	src/commitor/query.go	516;"	f	access:private	line:516	signature:(conds string)	type:string, attribute.TimeRange, error
+parseGeoCond	src/commitor/query.go	482;"	f	access:private	line:482	signature:(limit string)	type:string, error
+parseOsCond	src/commitor/query.go	448;"	f	access:private	line:448	signature:(limit string)	type:string, error
+parseParameters	src/commitor/query.go	194;"	f	access:private	line:194	signature:(param string)	type:map[string]string, bool
+parseValue	src/commitor/query.go	179;"	f	access:private	line:179	signature:(param string)	type:string
 positive	src/set/set.go	11;"	w	access:private	ctype:CountSet	line:11	type:map[int]int
 resizeConjSzRvs	src/dnf/dnfBuild.go	492;"	m	access:private	ctype:Handler	line:492	signature:(size int)
 result	src/set/set.go	13;"	w	access:private	ctype:CountSet	line:13	type:map[int]bool
-rowsClosure	src/commitor/query.go	17;"	t	access:private	line:17	type:func(rows *sql.Rows) interface{}
-runeCondMapping	src/commitor/query.go	420;"	f	access:private	line:420	signature:(c rune)	type:rune
+rowsClosure	src/commitor/query.go	16;"	t	access:private	line:16	type:func(rows *sql.Rows) interface{}
+runeCondMapping	src/commitor/query.go	398;"	f	access:private	line:398	signature:(c rune)	type:rune
 runtime	src/main.go	6;"	i	line:6
 searchCondCheck	src/dnf/dnfSearch.go	18;"	f	access:private	line:18	signature:(conds []Cond)	type:error
 service	src/main.go	7;"	i	line:7
@@ -309,13 +309,13 @@ sort	src/dnf/dnfBuild.go	7;"	i	line:7
 sort	src/dnf/dnfSearch.go	7;"	i	line:7
 sort	src/set/set.go	4;"	i	line:4
 strconv	src/attribute/attribute.go	7;"	i	line:7
-strconv	src/commitor/query.go	9;"	i	line:9
-strconv	src/dnf/dnfDebug.go	5;"	i	line:5
+strconv	src/commitor/query.go	8;"	i	line:8
+strconv	src/dnf/dnfDebug.go	6;"	i	line:6
 strconv	src/dnfTestMain.go	7;"	i	line:7
 strconv	src/service/httpService.go	10;"	i	line:10
 strconv	src/service/tcpService.go	15;"	i	line:15
-strings	src/commitor/query.go	10;"	i	line:10
-strings	src/dnf/dnfDebug.go	6;"	i	line:6
+strings	src/commitor/query.go	9;"	i	line:9
+strings	src/dnf/dnfDebug.go	7;"	i	line:7
 strings	src/service/tcpService.go	16;"	i	line:16
 sync	src/commitor/commitor.go	7;"	i	line:7
 sync	src/dnf/dnfBuild.go	8;"	i	line:8
@@ -348,9 +348,10 @@ time	src/main.go	9;"	i	line:9
 time	src/service/tcpService.go	17;"	i	line:17
 timePoint	src/attribute/attribute.go	56;"	t	access:private	line:56	type:struct
 tp	src/attribute/attribute.go	62;"	w	access:private	ctype:TimeRange	line:62	type:[]timePoint
-trackerUnmarshal	src/commitor/query.go	402;"	f	access:private	line:402	signature:(tracker string)	type:[]attribute.Tracker, error
+trackerUnmarshal	src/commitor/query.go	387;"	f	access:private	line:387	signature:(tracker string)	type:[]attribute.Tracker, error
 upperPowerOfTwo	src/dnf/dnfBuild.go	501;"	f	access:private	line:501	signature:(size int)	type:int
+urlParse	src/dnf/dnfDebug.go	121;"	f	access:private	line:121	signature:(addr string)	type:string
 val	src/dnf/dnfBuild.go	272;"	w	access:private	ctype:Term	line:272	type:string
-zoneInfoCommit	src/commitor/query.go	52;"	f	access:private	line:52	signature:()
-zones2Dnf	src/commitor/query.go	383;"	f	access:private	line:383	signature:(zones []string)	type:string, error
-zonesInfoHandler	src/commitor/query.go	42;"	v	access:private	line:42	type:*ZonesInfoHandler
+zoneInfoCommit	src/commitor/query.go	51;"	f	access:private	line:51	signature:()
+zones2Dnf	src/commitor/query.go	368;"	f	access:private	line:368	signature:(zones []string)	type:string, error
+zonesInfoHandler	src/commitor/query.go	41;"	v	access:private	line:41	type:*ZonesInfoHandler

@@ -140,7 +140,7 @@ func handleIndexRequestData(conn net.Conn, data []byte) error {
 			adlist := make([]interface{}, 0)
 			for _, doc := range docs {
 				if m := dnf.DocId2Map(doc); m != nil {
-					adlist = append(adlist, dnf.DocId2Map(doc))
+					adlist = append(adlist, m)
 				}
 			}
 			m["data"] = adlist
